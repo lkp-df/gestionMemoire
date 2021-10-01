@@ -1,0 +1,38 @@
+{% extends "base.html.twig" %} {% block title %}ceci est la page d'accueil{% endblock %} {% block body %}
+<br>
+<h1>Bienvenu dans <b>PMD Developper</b></h1>
+<p>PMD est une équipe des composée de trois dévéloppeurs. <br>Nous Développons dans plusieurs langages de programmation.</p>
+<br>
+<div class="row">
+    <div class="col-sm-4">
+        <div class="card">
+            <img class="card-img-top rounded-circle" src="{{ asset('picture/abas.png') }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Malick Tounkara</h5>
+                <p class="card-text">(Dévéloppeur PHP FullStack/React Native)</p>
+                <a href="#" class="btn btn-primary">voir plus</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card">
+            <img class="card-img-top rounded-circle" src="{{ asset('picture/john.jpg') }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Dieme Mamadou</h5>
+                <p class="card-text">(Dévéloppeur JAVA J2E/PHP FullStack)</p>
+                <a href="#" class="btn btn-primary">voir plus</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="card">
+            <img class="card-img-top rounded-circle" src="{{ asset('picture/abas.png') }}" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">Pepin Djoneska</h5>
+                <p class="card-text">(Dévéloppeur PHP FullStack/Spécialiste data base)</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

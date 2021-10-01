@@ -1,0 +1,123 @@
+{% extends "base.html.twig" %} {% block title %}Modifier un Encadreur {% endblock %} {% block body %}
+<style>
+    .continer {
+        padding: 20px;
+    }
+    
+    #show_img {
+        float: right;
+        width: 100%;
+    }
+    
+    #show_img img {
+        padding-top: -1px;
+    }
+    
+    img {
+        border: dashed 1px #010E21;
+        width: 100%;
+        height: 300px;
+    }
+    
+    #edit_show_img>img {
+        width: 100%;
+        height: 30px;
+    }
+    
+    .edit_prof {
+        border-radius: 50%;
+        border: none;
+        width: 300px;
+        height: 300px;
+    }
+    
+    .img_tab {
+        border: 0;
+        height: 50px;
+        width: 100px
+    }
+    
+    img,
+    embed {
+        margin-top: 1px;
+    }
+</style>
+<br>
+<h2 style="text-align: center;">
+    <b>Modifier l'encadreur</h2>
+
+		<br>
+		{{form_start(formEnditEncadreur,{'attr':{'id':"uploadForm",'novalidate':'novalidate'}})}}
+		<div class="row">
+			<div class="col-md-5">
+				<h3>Modification Informations Personnelles</h3>
+				<div class="form-group mb-3">
+					{{form_row(formEnditEncadreur.nom)}}
+				</div>
+				<div class="form-group mb-3">
+					{{form_row(formEnditEncadreur.prenom)}}
+				</div>
+				<div class="form-group mb-3">
+					{{form_row(formEnditEncadreur.titre)}}
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-success">modifier l'encadreur</button>
+				</div>
+				{{form_end(formEnditEncadreur)}}
+
+			</div>
+			<div class="col-md-3">
+				<h3>Profil Actuel</h3>
+				<div class="content">
+					<div>
+						<img src="{{asset('uploads/'~ avatar)}}" alt="">
+					</div>
+					<br>
+					<a  id="show_pr" class="btn btn-warning">Modifier le Profil</a>
+				</div>
+			</div>
+			<div class="col-md-4" id="view">
+				<h3>Mettre à jour son profil</h3>
+				<div id="edit_show_img"></div>
+					{{form_start(formEnditEncad_profil,{'attr':{'id':"uploadForm",'novalidate':'novalidate'}})}}
+						<div class="form-group mb-3">
+							{{form_row(formEnditEncad_profil.avatar,{'attr':{'value':avatar,'id':'edit_profil_encadreur_avatar'}})}}
+						</div>
+						<div class="form-group">
+							<button  class="btn btn-success">changer son profil</button>
+						</div>
+						{{form_end(formEnditEncad_profil)}}
+			</div>
+		</div>
+		<br>
+	{% endblock %}
+	{% block javascripts %}
+	<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        function previewFile(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#edit_show_img + img').remove();
+                    $('#edit_show_img').after('<img src="' + e.target.result + '" class="edit_prof" />');
+                }
+                reader.readAsDataURL(input.files[0]);
+
+            }
+        }
+		
+		$("#view").hide();
+
+          $("#show_pr").on("click",function(){
+				$("#view").toggle();
+		  })   
+
+        $("#edit_profil_encadreur_avatar").change(function() {
+            previewFile(this);
+        })
+        
+    })
+</script>
+	{% endblock %}

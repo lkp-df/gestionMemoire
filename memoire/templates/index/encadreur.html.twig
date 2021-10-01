@@ -1,0 +1,168 @@
+{% extends "base.html.twig" %} {% block title %}Gestion des Encadreurs {% endblock %} {% block body %}
+<style>
+    .continer {
+        padding: 20px;
+    }
+    
+    #show_img {
+        float: right;
+        width: 100%;
+    }
+    
+    #show_img img {
+        padding-top: -1px;
+    }
+    
+    img {
+        border: solid 1px #010E21;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .img_tab {
+        border: 0;
+        height: 50px;
+        width: 100px
+    }
+    
+    img,
+    embed {
+        margin-top: 1px;
+    }
+</style><br>
+<div class="content">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+            <button class="btn btn-success" id="creer_en">Créer un encadreur</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+{{form_start(formEncadreur,{'attr':{'id':"uploadForm",'novalidate':'novalidate'}})}}
+<div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-6">
+        <div class="form-group mb-3">
+            {{form_row(formEncadreur.nom)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEncadreur.prenom)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEncadreur.titre)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEncadreur.avatar)}}
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Créer l'encadreur</button>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <p>Prévisualisation</p>
+        <div class="content">
+            <div id="show_img"></div>
+
+        </div>
+    </div>
+</div> {{form_end(formEncadreur)}}
+<br>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <h2>Liste des Encadreurs</h2>
+        {% if encadreurs %}
+        <div class="card" style="width: 100%;">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Titre</th>
+                            <th scope="col">Profil</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set i = 0 %} {% for encadreur in encadreurs %}
+                        <tr>
+                            <th scope="row">{% set i = i+ 1 %}{{i}}</th>
+                            <td>{{encadreur.prenom}}</td>
+                            <td>{{encadreur.nom}}</td>
+                            <td>{{encadreur.titre}}</td>
+                            <td>
+                                <img class="rounded-circle img_tab" src="{{asset('uploads/'~ encadreur.avatar)}}" alt="">
+                            </td>
+                            <td>
+                                <a href="{{path('edit_encadreur',{'id':encadreur.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>&nbsp;
+                                <a href="#" data-toggle="tooltip" class="btn btn-danger del" data-del="{{encadreur.id}}" data-placement="top" title="supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %} Aucun Encadreur {% endif %}
+    </div>
+    <div class="col-md-1"></div>
+
+</div>
+
+{% endblock %} {% block javascripts %}
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        function previewFile(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#show_img + img').remove();
+                    $('#show_img').after('<img src="' + e.target.result + '" />');
+                }
+                reader.readAsDataURL(input.files[0]);
+
+            }
+        }
+        $("#uploadForm").hide();
+        $("#creer_en").on("click", function() {
+            $("#uploadForm").toggle();
+        })
+
+        $("#encadreur_avatar").change(function() {
+            previewFile(this);
+        })
+
+        $(".del").on("click", function() {
+            let del = $(this).data("del");
+
+            if (confirm("Voulez-vous supprimer ce profsseur ?")) {
+                $.ajax({
+                    url: "{{path('del_encadreur')}}",
+                    method: "POST",
+                    dataType: "JSON",
+                    data: {
+                        id_del: del
+                    },
+                    success: function(data) {
+                        alert(data["message"]);
+                        window.location.href="";
+                    }
+                })
+            }
+        })
+    })
+</script>
+{% endblock %}

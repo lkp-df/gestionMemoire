@@ -1,0 +1,16 @@
+{% extends "base.html.twig" %} {% block title %}Création de compte{% endblock %} {% block body %} {{form_start(formUser,{'attr':{'novalidate':'novalidate'}})}}
+<div class="row mt-3">
+    <div class="col-md-2"></div>
+    <div class="col-lg-8">
+        <div class="form-group mb-3">
+            {{form_row(formUser.username)}}</div>
+        <div class="form-group mb-3 mb-3">{{form_row(formUser.email)}}</div>
+        <div class="form-group mb-3">{{form_row(formUser.password)}}</div>
+        <div class="form-group mb-3">{{form_row(formUser.confirmPassword)}}</div>
+        <div class="form-group mb-3">
+            <button class="btn btn-primary">validé</button>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+{{form_end(formUser)}} {% endblock %}

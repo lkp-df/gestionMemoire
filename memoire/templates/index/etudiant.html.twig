@@ -1,0 +1,173 @@
+{% extends "base.html.twig" %} {% block title %}Gestion des Encadreurs {% endblock %} {% block body %}
+<style>
+    .continer {
+        padding: 20px;
+    }
+    
+    #show_img {
+        float: right;
+        width: 100%;
+    }
+    
+    #show_img img {
+        padding-top: -1px;
+    }
+    
+    img {
+        border: solid 1px #010E21;
+        width: 100%;
+        height: 100%;
+    }
+    
+    .img_tab {
+        border: 0;
+        height: 50px;
+        width: 100px
+    }
+    
+    img,
+    embed {
+        margin-top: 1px;
+    }
+</style><br>
+<div class="content">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+            <button class="btn btn-success" id="creer_en">Créer un Etudiant</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+{{form_start(formEtudiantMemoire,{'attr':{'id':"showForm",'novalidate':'novalidate'}})}}
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-5">
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.nom)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.prenom)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.adresse)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.filiere)}}
+        </div>
+        <div class="form-group mb-3">
+            <button type="submit" class="btn btn-primary">creer l'etudiant</button>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.annee)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.theme)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.options)}}
+        </div>
+        <div class="form-group mb-3">
+            {{form_row(formEtudiantMemoire.encadreur)}}
+        </div>
+    </div>
+
+</div>
+
+<div class="col-md-1">
+</div>
+</div> {{form_end(formEtudiantMemoire)}}
+<br>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <h2>Liste des Etudiants</h2>
+        {% if etudiants %}
+        <div class="card" style="width: 100%;">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Prénom</th>
+                            <th scope="col">Nom</th>
+                            <th scope="col">Adresse</th>
+                            <th scope="col">Filiere</th>
+                            <th scope="col">Thème Memoire</th>
+                            <th scope="col">Option</th>
+                            <th scope="col">Année du Memoire</th>
+                            <th scope="col">Encadreur</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% set i = 0 %} {% for etudiant in etudiants %}
+                        <tr>
+                            <th scope="row">{% set i = i+ 1 %}{{i}}</th>
+                            <td>{{etudiant.prenom}}</td>
+                            <td>{{etudiant.nom}}</td>
+                            <td>{{etudiant.adresse}}</td>
+                            <td>{{etudiant.filiere.designation}}</td>
+                            <td>{{etudiant.memoire.theme}}</td>
+                            <td>{{etudiant.memoire.options}}</td>
+                            <td>{{etudiant.memoire.annee}}</td>
+                            <td>{{"Mr/Mme "~ etudiant.encadreur.nom}}</td>
+                            <td>
+                                <a href="{{path('edit_etud',{'id':etudiant.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>&nbsp;
+                                <a href="#" data-toggle="tooltip" class="btn btn-danger del" data-del="{{etudiant.id}}" data-placement="top" title="supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %} Aucun Etudiant {% endif %}
+    </div>
+    <div class="col-md-1"></div>
+
+</div>
+
+{% endblock %} {% block javascripts %}
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+
+        $("#showForm").hide();
+        $("#creer_en").on("click", function() {
+            $("#showForm").toggle();
+        })
+
+
+
+        $(".del").on("click", function() {
+            let del = $(this).data("del");
+
+            if (confirm("Voulez-vous supprimer cet l'étudiant ?")) {
+                $.ajax({
+                    url: "{{path('del_etudiant')}}",
+                    method: "POST",
+                    dataType: "JSON",
+                    data: {
+                        id_del: del
+                    },
+                    success: function(data) {
+                        alert(data["message"]);
+                        window.location.href = "";
+                    }
+                })
+            }
+        })
+    })
+</script>
+{% endblock %}

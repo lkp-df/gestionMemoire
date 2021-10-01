@@ -1,0 +1,101 @@
+{% extends "base.html.twig" %} {% block title %}Gestion des filières {% endblock %} {% block body %}
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <button class="btn btn-outline-success mb-2 cacher">
+					Créer une filière
+				</button>
+            <br> {{form_start(formFiliere,{'attr':{'id':'form_filiere','novalidate':'novalidate'}})}}
+            <div class="form-group">
+                {{form_row(formFiliere.codeFiliere)}}
+            </div>
+            <br>
+            <div class="form-group">
+                {{form_row(formFiliere.designation)}}
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Créer la filière</button> {{form_end(formFiliere)}}
+
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <h2>Liste des filières</h2>
+            {% if filieres %}
+            <div class="card" style="width: 100%;">
+                <div class="card-header"></div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Code Filière</th>
+                                <th scope="col">Désignation</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set i = 0 %} {% for filiere in filieres %}
+                            <tr>
+                                <th scope="row">{% set i = i+ 1 %}{{i}}</th>
+                                <td>{{filiere.codeFiliere}}</td>
+                                <td>{{filiere.designation}}</td>
+                                <td>
+                                    <a href="{{path('edit_filiere',{'id':filiere.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>&nbsp;
+                                    <a href="#" data-toggle="tooltip" class="btn btn-danger del" data-del="{{filiere.id}}" data-placement="top" title="supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %} Aucune Filières trouvées {% endif %}
+        </div>
+        <div class="col-md-1"></div>
+
+    </div>
+
+
+</div>
+{% endblock %} {% block javascripts %}
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $("#form_filiere").hide();
+        $(".cacher").on("click", function() {
+            $("#form_filiere").toggle();
+        })
+
+        $(".del").on("click", function() {
+            let del = $(this).data('del');
+            if (confirm('Attention, la suppresion est dangereuse')) {
+                $.ajax({
+                    url: "{{path('del_filiere')}}",
+                    method: "POST",
+                    dataType: "JSON",
+                    data: {
+                        del_id: del
+                    },
+                    success: function(data) {
+                        alert(data["message"]);
+                        window.location.href = "";
+                    }
+                })
+            }
+
+        })
+    })
+</script>
+{% endblock %}
