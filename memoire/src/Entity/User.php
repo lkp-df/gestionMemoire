@@ -2,18 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(
  * fields={"email"},
- * message="cet email existe déja, veuillez changer svp"
- * )
+ * message="cet email existe déja, veuillez changer svp")
+ *@IsGranted("ROLE_USER")  
  */
 class User implements UserInterface
 {
@@ -57,6 +58,11 @@ class User implements UserInterface
      * )
      */
     private $confirmPassword;
+
+    /**
+     * @ORM\Column(type="json")
+     */
+    private $roles = [];
 
     public function getId(): ?int
     {
@@ -120,9 +126,13 @@ class User implements UserInterface
     }
 
     //implementations des methodes de userInteface
-    public function getRoles()
+    public function getRoles(): array
     {
-        return ['ROLE_USER'];
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
     public function getSalt()
@@ -130,5 +140,12 @@ class User implements UserInterface
     }
     public function eraseCredentials()
     {
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
     }
 }

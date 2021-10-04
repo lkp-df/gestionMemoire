@@ -3,8 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Jury;
+use App\Entity\User;
+use App\Form\UserType;
 use App\Entity\Filiere;
 use App\Entity\Memoire;
+use App\Entity\EditUser;
 use App\Entity\Etudiant;
 use App\Entity\Encadreur;
 use App\Form\FiliereType;
@@ -22,6 +25,7 @@ use App\Form\EditEncadreurType;
 use App\Entity\EditInfoEtudiant;
 use App\Entity\CompletSoutenance;
 use App\Entity\EtudiantSoutenance;
+use App\Repository\UserRepository;
 use App\Entity\EtudiantSoutenances;
 use App\Form\CompletSoutenanceType;
 use App\Form\EditInfoEncadreurType;
@@ -31,12 +35,13 @@ use App\Repository\FiliereRepository;
 use App\Repository\MemoireRepository;
 use App\Repository\EtudiantRepository;
 use App\Repository\EncadreurRepository;
-use App\Repository\SoutenanceRepository;
 use Doctrine\Persistence\ObjectManager;
+use App\Repository\SoutenanceRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class IndexController extends AbstractController
@@ -52,7 +57,8 @@ class IndexController extends AbstractController
         ]);
     }
     /**
-     * @Route("/gestfiliere",name="gest_filiere")
+     * @Route("/filiere",name="gest_filiere")
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function gestionFiliere(Request $request, ObjectManager $manager, FiliereRepository $repo)
     {
@@ -84,6 +90,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/filiere/edit/{id<\d+>}",name="edit_filiere")
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function editFiliere(Filiere $filiere, Request $request, ObjectManager $manager)
     {
@@ -102,6 +109,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/filiere/del",name="del_filiere",methods={"GET","POST"})
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function delete_filiere(Request $request, ObjectManager $manager, FiliereRepository $repo)
     {
@@ -123,6 +131,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/gestencadreur",name="gest_encadreur",methods={"POST","GET"})
+     * @IsGranted("ROLE_DIRECTEUR")
      */
     public function gestionEncadreur(Request $request, ObjectManager $manager, EncadreurRepository $repo)
     {
@@ -157,6 +166,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/gestencadreur/edit/{id<\d+>}",name="edit_encadreur")
+     * @IsGranted("ROLE_DIRECTEUR")
      */
     public function edit_encadreur(Encadreur $encadreur, Request $request, ObjectManager $manager)
     {
@@ -227,6 +237,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/gestencadreur/del",name="del_encadreur",methods={"POST","GET"})
+     * @IsGranted("ROLE_DIRECTEUR")
      */
     public function delete_encadreur(Request $request, EncadreurRepository $repo, ObjectManager $manager)
     {
@@ -252,6 +263,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/gestetudiant",name="gest_etudiant")
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function gestionEtudiant(
         EtudiantRepository $repo,
@@ -331,6 +343,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/gestetudiant/edit/{id<\d+>}",name="edit_etud")
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function edit_etudiant(Etudiant $etudiant, Request $request, ObjectManager $manager, FiliereRepository $f, EncadreurRepository $E)
     {
@@ -433,6 +446,7 @@ class IndexController extends AbstractController
 
     /**
      * @Route("/gestetudiant/del",name="del_etudiant",methods={"POST","GET"})
+     * @IsGranted("ROLE_SECRETAIRE")
      */
     public function del_etudiant(Request $request, EtudiantRepository $repo, ObjectManager $manager)
     {
@@ -454,6 +468,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/gestsoutenance",name="gest_soutenance",methods={"POST","GET"})
+     * @IsGranted("ROLE_DIRECTEUR")
      */
     public function gestionSoutenance(Request $request, EncadreurRepository $en, EtudiantRepository $et, ObjectManager $manager, SoutenanceRepository $allSoutenance)
     {
@@ -605,6 +620,7 @@ class IndexController extends AbstractController
     }
     /**
      * @Route("/gestsoutenance/view/{id<\d+>}",name="view_soutenance")
+     * @IsGranted("ROLE_DIRECTEUR")
      */
     public function view_soutenance(Soutenance $soutenance, SoutenanceRepository $sou)
     {
@@ -617,9 +633,49 @@ class IndexController extends AbstractController
             [
                 "soutenance" => $soutenance,
                 "jurys" => $jurys,
-                "etudiants"=>$etudiants
+                "etudiants" => $etudiants
             ]
         );
     }
-    
+
+    /**
+     * @Route("/utilisateurs",name="gestion_utulisateur")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function gest_utilisateur(UserRepository $users)
+    {
+        $users = $users->findAll();
+        return $this->render(
+            "index/utilisateur.html.twig",
+            ["users" => $users]
+        );
+    }
+
+    /**
+     * @Route("/utilisateurs/edit/{id<\d+>}", name="edit_utilisateur")
+     * @IsGranted("ROLE_ADMIN")
+     */
+    public function edit_users(User $user, Request $request,ObjectManager $manager)
+    {   
+        $user_edit = new EditUser();
+        $user_edit->setUsername($user->getUsername());
+        $user_edit->setRoles($user->getRoles());
+        
+        $formRoles = $this->createForm(UserType::class, $user_edit);
+        $formRoles->handleRequest($request);
+
+        if ($formRoles->isSubmitted() && $formRoles->isValid()) {
+            $user->setRoles($request->request->get("user")["roles"]);
+            $user->setUsername($request->request->get("user")["username"]);
+            
+            $manager->persist($user);
+            $manager->flush();
+
+            return $this->redirectToRoute('gestion_utulisateur');
+        }
+        return $this->render(
+            "index/edit_utilisateur.html.twig",
+            ["formRoles" => $formRoles->createView()]
+        );
+    }
 }

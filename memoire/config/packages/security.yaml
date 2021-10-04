@@ -6,18 +6,18 @@ security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        in_memory: {memory: ~}
+        in_memory: { memory: ~ }
         utilisateurs:
-                entity:
-                    class: App\Entity\User
-                    property: email
+            entity:
+                class: App\Entity\User
+                property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             anonymous: lazy
-            provider: utilisateurs 
+            provider: utilisateurs
             #mode d'authentification
             form_login:
                 #specifier le lieu où se trouve le formaulaire de login
@@ -42,5 +42,14 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/filiere, roles: ROLE_SECRETAIRE }
+        - { path: ^/gestetudiant, roles: ROLE_SECRETAIRE }
+        - { path: ^/gestencadreur, roles: ROLE_DIRECTEUR }
+        - { path: ^/gestsoutenance, roles: ROLE_DIRECTEUR }
+        - { path: ^/utilisateurs, roles: ROLE_ADMIN }
+
         # - { path: ^/profile, roles: ROLE_USER }
+    role_hierarchy:
+        ROLE_SECRETAIRE: ROLE_USER
+        ROLE_DIRECTEUR: ROLE_SECRETAIRE
+        ROLE_ADMIN: ROLE_DIRECTEUR

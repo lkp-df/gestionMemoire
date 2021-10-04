@@ -30,30 +30,33 @@
 						<a class="nav-link" href="#">Home
 						</a>
 					</li>
-                    {% if app.user %}
-                    
-					<li class="nav-item">
-						<a class="nav-link" href="{{path('gest_filiere')}}">Gesion Filières</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{path('gest_encadreur')}}">Gestion Encadreurs</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{path('gest_etudiant')}}">Gestion Etudiants</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="{{path('gest_soutenance')}}">Gestion Soutenance</a>
-					</li>
-                    {% endif %}
-					
-                    {% if  not app.user %}
-					<li class="nav-item">
-						<a class="nav-link" href="{{path('login')}}">Se connecter</a>
-					</li>
-                    <li class="nav-item">
-						<a class="nav-link" href="{{path('registration')}}">Créer un compte</a>
-					</li>
+					{% if app.user %}
+
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('gest_filiere')}}">Gesion Filières</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('gest_encadreur')}}">Gestion Encadreurs</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('gest_etudiant')}}">Gestion Etudiants</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('gest_soutenance')}}">Gestion Soutenance</a>
+						</li>
+					{% endif %}
+
+					{% if  not app.user %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('login')}}">Se connecter</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('registration')}}">Créer un compte</a>
+						</li>
 					{% else %}
+						<li class="nav-item">
+							<a class="nav-link" href="{{path('gestion_utulisateur')}}">Gestion utilisateurs</a>
+						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{path('logout')}}">Deconnexion</a>
 						</li>

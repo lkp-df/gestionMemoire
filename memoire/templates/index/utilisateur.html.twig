@@ -1,0 +1,49 @@
+{% extends "base.html.twig" %} {% block title %}Gestion des utilisateurs{% endblock %} {% block body %}
+<br>
+<h3>Gestion des utilisateurs</h3>
+<br> {% if users %}
+<div class="container">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Nom utilisateur</th>
+                <th scope="col">Email</th>
+                <th scope="col">Roles</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% set i = 0 %} 
+            {% for user in users %} 
+            <tr>
+                <th scope="row">{% set i = i + 1 %} {{i}}</th>
+                <td>{{user.username}}</td>
+                <td>{{user.email}}</td>
+                <td>
+                    <!-- roles est u  tableau json -->
+                    {% for roles in user.roles %}
+                        {% if roles == "ROLE_ADMIN" %}
+                            Administrateur
+                        {% elseif roles == "ROLE_SECRETAIRE" %}
+                            Secrétaire
+                        {% elseif roles == "ROLE_DIRECTEUR" %}
+                            Directeur
+                        {% else %}
+                            utilisateur
+                        {% endif %}
+                        
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{{path('edit_utilisateur',{'id':user.id})}}" class="btn btn-success"><i class="fas fa-edit"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+</div>
+{% else %} Pas D'utilisateurs {% endif %} {% endblock %}
