@@ -37,6 +37,7 @@ use App\Repository\EtudiantRepository;
 use App\Repository\EncadreurRepository;
 use Doctrine\Persistence\ObjectManager;
 use App\Repository\SoutenanceRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -60,7 +61,7 @@ class IndexController extends AbstractController
      * @Route("/filiere",name="gest_filiere")
      * @IsGranted("ROLE_SECRETAIRE")
      */
-    public function gestionFiliere(Request $request, ObjectManager $manager, FiliereRepository $repo)
+    public function gestionFiliere(Request $request, ObjectManager $manager, FiliereRepository $repo, PaginatorInterface $paginator)
     {
         $filiere = new Filiere();
         $form = $this->createForm(FiliereType::class, $filiere);
@@ -80,8 +81,15 @@ class IndexController extends AbstractController
 
 
         //pour l'affichage des filieres
-        $filieres = $repo->findAll();
+        $mesfilieres = $repo->findAll();
 
+        #pagination avec knp paginator
+        #filieres est maintenant mes filieres avec pagnation
+        $filieres = $paginator->paginate(
+            $mesfilieres, #les donnees sur lequelles nous allons paginer
+            $request->query->getInt('page', 1), #definie le parametre page en get et si c'est pas defini on prend la page 1
+            5, #nombre d'element a afficher par page
+        );
         return $this->render('index/filiere.html.twig', [
             "formFiliere" => $form->createView(),
             "filieres" => $filieres
@@ -655,19 +663,19 @@ class IndexController extends AbstractController
      * @Route("/utilisateurs/edit/{id<\d+>}", name="edit_utilisateur")
      * @IsGranted("ROLE_ADMIN")
      */
-    public function edit_users(User $user, Request $request,ObjectManager $manager)
-    {   
+    public function edit_users(User $user, Request $request, ObjectManager $manager)
+    {
         $user_edit = new EditUser();
         $user_edit->setUsername($user->getUsername());
         $user_edit->setRoles($user->getRoles());
-        
+
         $formRoles = $this->createForm(UserType::class, $user_edit);
         $formRoles->handleRequest($request);
 
         if ($formRoles->isSubmitted() && $formRoles->isValid()) {
             $user->setRoles($request->request->get("user")["roles"]);
             $user->setUsername($request->request->get("user")["username"]);
-            
+
             $manager->persist($user);
             $manager->flush();
 
