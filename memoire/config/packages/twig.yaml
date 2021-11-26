@@ -4,3 +4,8 @@ twig:
     strict_variables: '%kernel.debug%'
     exception_controller: null
     form_themes: ['bootstrap_4_layout.html.twig']
+    #ajout de nos langues afin quelles soient reconnuent globalement
+    #on creer une nouvelle variable global
+    globals:
+        #on l'appelle locale et on va la chercher dans les parametres de service.yaml
+        locales: '%app.locales%' #on a recuperer la variable definie dans service et on la transmet a toutes les vue afin quelles soient visibles

@@ -5,6 +5,10 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     uploads_directory: '%kernel.project_dir%/public/uploads'
+    #on creer un tableau qui va stocker les langues que nous allons disposer dans notre site
+    app.locales: [fr, en]
+    #on definie la langue locale par fr en default
+    locale: fr
 
 services:
     
@@ -32,3 +36,7 @@ services:
         
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    
+    #je charge le souscripteur d'evenement du dossier EventListner afin qu'il soit reconu globalement dans twig
+    App\EventSubscriber\LocaleSubscriber:
+        arguments: ['%kernel.default_locale%']

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+  <file source-language="fr" target-language="fr" datatype="plaintext" original="file.ext">
+    <header>
+      <tool tool-id="symfony" tool-name="Symfony"/>
+    </header>
+    <body>
+      <trans-unit id="JeIXvGs" resname="Welcome in the management of the memoires, made by PMD Developper to help you understand symfony 4">
+        <source>Welcome in the management of the memoires, made by PMD Developper to help you understand symfony 4</source>
+        <target>Bienvenue dans le système de gestion des mémoires, ceci est fait par PMD Developper pour vous aider à comprendre les bases de symfony 4</target>
+      </trans-unit>
+      <trans-unit id="H3G4vxK" resname="Manage Memories">
+        <source>Manage Memories</source>
+        <target>Gestion des Mémoires</target>
+      </trans-unit>
+      <trans-unit id="OnhpU4i" resname="Home">
+        <source>Home</source>
+        <target>Accueil</target>
+      </trans-unit>
+      <trans-unit id="UVWff5Y" resname="Manage Faculty">
+        <source>Manage Faculty</source>
+        <target>Gestion des Filières</target>
+      </trans-unit>
+      <trans-unit id="BuorwjV" resname="Manage Teachers">
+        <source>Manage Teachers</source>
+        <target>Gestion des Professeurs</target>
+      </trans-unit>
+      <trans-unit id="hpQWDIF" resname="Manage Students">
+        <source>Manage Students</source>
+        <target>Gestion des Etudiants</target>
+      </trans-unit>
+      <trans-unit id="j3LG_yP" resname="Manage Soutenances">
+        <source>Manage Soutenances</source>
+        <target>Gestion des  Soutenances</target>
+      </trans-unit>
+      <trans-unit id="nWMiwfT" resname="Login">
+        <source>Login</source>
+        <target>Se connecter</target>
+      </trans-unit>
+      <trans-unit id="gI8Z3Nj" resname="Sig Up">
+        <source>Sig Up</source>
+        <target>Créer un compte</target>
+      </trans-unit>
+      <trans-unit id="OpQ.Vio" resname="Manage Users">
+        <source>Manage Users</source>
+        <target>Gestion des Utilisateurs</target>
+      </trans-unit>
+      <trans-unit id="0FJ_Sz1" resname="Logout">
+        <source>Logout</source>
+        <target>Se deconnecter</target>
+      </trans-unit>
+      <trans-unit id="IrjCCjh" resname="Choose a Langage">
+        <source>Choose a Langage</source>
+        <target>Choisir une Langue</target>
+      </trans-unit>
+      <trans-unit id="uhGL9.y" resname="English">
+        <source>English</source>
+        <target>Anglais</target>
+      </trans-unit>
+      <trans-unit id="dFgZn_l" resname="French">
+        <source>French</source>
+        <target>Français</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

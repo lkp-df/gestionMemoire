@@ -44,6 +44,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
@@ -51,10 +52,11 @@ class IndexController extends AbstractController
      * @Route("/", name="")
      * @Route("/index", name="index")
      */
-    public function index(): Response
-    {
+    public function index(TranslatorInterface $translator): Response
+    {   
+        $message = $translator->trans("Welcome in the management of the memoires, made by PMD Developper to help you understand symfony 4");
         return $this->render('index/index.html.twig', [
-            'controller_name' => 'IndexController',
+            'message' => $message,
         ]);
     }
     /**

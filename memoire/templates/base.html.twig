@@ -1,76 +1,214 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="UTF-8">
-		<title>
-			{% block title %}Welcome!
-			{% endblock %}
-		</title>
-		{% block stylesheets %}
-			<link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-			<link rel="icon" href="{{ asset('images/livre-ouvert.jpg') }}">
-			<link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
-		{% endblock %}
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}
+                Welcome!
+                                                                                                			
+                                                                                            
+                                                                            
+                                                            
+                                            
+                            
+            {% endblock %}
+        </title>
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+            <link rel="icon" href="{{ asset('images/livre-ouvert.jpg') }}">
+            <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+        {% endblock %}
 
-	</head>
+    </head>
 
-	<body>
-		<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-			<a class="navbar-brand" href="#">
-				<b>&nbsp;Gestion Mémoires</b>
-			</a>
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-				<span class="navbar-toggler-icon"></span>
-			</button>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <a class="navbar-brand" href="#">
+                <b>
+                    &nbsp;
+                                                                                                                        					
+                                                                                                                        
+                                                                                                    
+                                                                                
+                                                            
+                                        
+                    {% trans %}
+                    Manage Memories
+                                                                                                                        
+                                                                                                    
+                                                                                
+                                                            
+                                        
+                    {% endtrans %}
+                </b>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-			<div class="collapse navbar-collapse" id="navbarColor01">
-				<ul class="navbar-nav mr-auto">
-					<li class="nav-item active">
-						<a class="nav-link" href="#">Home
-						</a>
-					</li>
-					{% if app.user %}
+            <div class="collapse navbar-collapse" id="navbarColor01">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{{ path('index') }}">
+                            {% trans %}
+                            Home
+                                                                                                                                                                        
+                                                                                                                                            
+                                                                                                                
+                                                                                    
+                                                        
+                            {% endtrans %}
+                        </a>
+                    </li>
+                    {% if app.user %}
 
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('gest_filiere')}}">Gesion Filières</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('gest_encadreur')}}">Gestion Encadreurs</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('gest_etudiant')}}">Gestion Etudiants</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('gest_soutenance')}}">Gestion Soutenance</a>
-						</li>
-					{% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('gest_filiere') }}">
+                                {% trans %}
+                                Manage Faculty
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('gest_encadreur') }}">
+                                {% trans %}
+                                Manage Teachers
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('gest_etudiant') }}">
+                                {% trans %}
+                                Manage Students
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('gest_soutenance') }}">
+                                {% trans %}
+                                Manage Soutenances
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                    {% endif %}
 
-					{% if  not app.user %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('login')}}">Se connecter</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('registration')}}">Créer un compte</a>
-						</li>
-					{% else %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('gestion_utulisateur')}}">Gestion utilisateurs</a>
-						</li>
-						<li class="nav-item">
-							<a class="nav-link" href="{{path('logout')}}">Deconnexion</a>
-						</li>
-					{% endif %}
-				</ul>
-			</div>
-		</nav>
+                    {% if  not app.user %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('login') }}">
+                                {% trans %}
+                                Login
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('registration') }}">
+                                {% trans %}
+                                Sig Up
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('gestion_utulisateur') }}">
+                                {% trans %}
+                                Manage Users
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('logout') }}">
+                                {% trans %}
+                                Logout
+                                                                                                                                                                                                
+                                                                                                                                                                
+                                                                                                                                
+                                                                                                
+                                                                
+                                {% endtrans %}
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+                {% if app.user %}
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a class="btn btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-expanded="false">
+                                    {% trans %}Choose a Langage{% endtrans %}                                     
+                                </a>
 
-		<div class="container"> {% block body %}{% endblock %}
-			</div>
-			{% block javascripts %}
-				<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
-				<script src="{{ asset('js/bootstrap.min.js') }}"></script>
-			{% endblock %}
-		</body>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                    <a class="dropdown-item" href="{{ path('language',{'locale':'en'}) }}">
+                                        <img src="{{ asset('language-drapeau/anglais.png') }}" style="width:50px;height:auto">
+                                        {% trans %}&nbsp;English{% endtrans %}
+                                                                            
+                                    </a>
+                                    <a class="dropdown-item" href="{{ path('language',{'locale':'fr'}) }}">
+                                        <img src="{{ asset('language-drapeau/france.png') }}" style="width:50px;height:auto">
+                                        {% trans %}&nbsp;French{% endtrans %}                                   
+                                    </a>
 
-	</html>
+                                </div>
+                            </div>
+
+                        </li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+
+        <div class="container">
+            {% block body %}{% endblock %}
+        </div>
+        {% block javascripts %}
+            <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+            <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+        {% endblock %}
+    </body>
+
+</html>
+
+
+
+
+
+{# 
+<pre>
+		{{ dump(app.request) }}
+	</pre> #}
