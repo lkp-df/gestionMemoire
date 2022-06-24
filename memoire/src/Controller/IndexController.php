@@ -2,15 +2,18 @@
 
 namespace App\Controller;
 
+use DateTime;
 use App\Entity\Jury;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Entity\Filiere;
 use App\Entity\Memoire;
+use App\Entity\Reponse;
 use App\Entity\EditUser;
 use App\Entity\Etudiant;
 use App\Entity\Encadreur;
 use App\Form\FiliereType;
+use App\Form\ReponseType;
 use App\Entity\Soutenance;
 use App\Entity\EditFiliere;
 use App\Entity\EditMemoire;
@@ -25,6 +28,7 @@ use App\Form\EditEncadreurType;
 use App\Entity\EditInfoEtudiant;
 use App\Entity\CompletSoutenance;
 use App\Entity\EtudiantSoutenance;
+use App\Repository\JuryRepository;
 use App\Repository\UserRepository;
 use App\Entity\EtudiantSoutenances;
 use App\Form\CompletSoutenanceType;
@@ -37,23 +41,30 @@ use App\Repository\EtudiantRepository;
 use App\Repository\EncadreurRepository;
 use Doctrine\Persistence\ObjectManager;
 use App\Repository\SoutenanceRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\EtudiantSoutenancesRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class IndexController extends AbstractController
 {
+    private $em;
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->em = $entityManager;
+    }
     /**
      * @Route("/", name="")
      * @Route("/index", name="index")
      */
     public function index(TranslatorInterface $translator): Response
-    {   
+    {
         $message = $translator->trans("Welcome in the management of the memoires, made by PMD Developper to help you understand symfony 4");
         return $this->render('index/index.html.twig', [
             'message' => $message,
@@ -644,6 +655,115 @@ class IndexController extends AbstractController
                 "soutenance" => $soutenance,
                 "jurys" => $jurys,
                 "etudiants" => $etudiants
+            ]
+        );
+    }
+    /**
+     * @Route("/gestsoutenance/edit/{id<\d+>}",name="edit_soutenance",methods={"POST","GET"})
+     * @IsGranted("ROLE_DIRECTEUR")
+     */
+    public function edit_soutenance(
+        Request $request,
+        Soutenance $soutenance,
+        EtudiantSoutenancesRepository $repo_sout,
+        JuryRepository $jury,
+        EncadreurRepository $en
+    ) {
+        //tous les etudiants presents à cette soutenance
+        $etudiants_soutenance =  $repo_sout->findBy(['soutenance' => $soutenance->getId()]);
+
+        //les jurys présents à la soutencance ainsi que que les titres qu'ils occupents
+        $jurys = $jury->findBy(['soutenances' => $soutenance->getId()]);
+
+        //ajouter une ligne de jury
+        $afficheJury = $request->request->get("afficheJury");
+        // dd($afficheJury); c'est null mais ça marche
+        if ($afficheJury) {
+            //recuperation des tous les encadreurs en base
+            $encadreurs = $en->findAll();
+            $ligne_jury =
+                '<tr>
+                        <td>
+                            <select class="form-control" name="select_jury[]" id="select_jury[]">
+                            <option>Choisir l\'encadreur</option>
+                            ';
+            foreach ($encadreurs as $encadreur) {
+                $ligne_jury .= '<option value="' . $encadreur->getId() . '">' . $encadreur->getPrenom() . ' &nbsp; ' . $encadreur->getNom() . ' </option>';
+            }
+            $ligne_jury .= '
+                    </select>
+                    </td>
+                        
+                    <td>
+                        <select class="form-control" id="select_post[]" name="select_post[]">
+                            <option>choisir poste</option>
+                            <option value="pres">Président du Jury</option>
+                            <option value="memb">Membre du Jury</option>
+                        </select>
+                    </td>
+                    <td>
+                      <a href="#" class="btn btn-danger" id="remove_jury">-</a>
+                    </td>
+             </tr>';
+            return new JsonResponse($ligne_jury, 200);
+        }
+
+        //formulaire pour ajouter un element manqué durant la modification
+        $reponse = new Reponse();
+        $formReponse = $this->createForm(ReponseType::class, $reponse);
+        $formReponse->handleRequest($request);
+        //on va recuperer les elements dans un tableau
+        if ($formReponse->isSubmitted() && $formReponse->isValid()) {
+            //dd($request);
+            //recuperons nos deux tableaux
+            $t_jury = $request->request->get("select_jury");
+            $t_poste = $request->request->get("select_post");
+            //pour l'ajout d'un jury a une soutenance
+            for ($i = 0; $i < count($t_jury); $i++) {
+                $jury = new Jury();
+                $jury->setSoutenances($soutenance)
+                    ->setEncadreur($en->find($t_jury[$i]));
+                if ($t_poste[$i] == "pres") {
+                    $jury->setTitre("president");
+                } else {
+                    $jury->setTitre("membre");
+                }
+                $this->em->persist($jury);
+                $this->em->flush();
+            }
+        }
+
+        //formulaire de modification soutenance
+        $completSoutenance = new CompletSoutenance();
+        $completSoutenance->setSalle($soutenance->getSalle())
+            ->setDate(($soutenance->getDate()))
+            ->setTypeSoutenance($soutenance->getType());
+        $formSoutenance = $this->createForm(CompletSoutenanceType::class, $completSoutenance);
+        $formSoutenance->handleRequest($request);
+
+        if ($formSoutenance->isSubmitted() && $formSoutenance->isValid()) {
+            /*             dd($formSoutenance->getData()->getSalle());  //recuperation en get
+ */           // dd($request->request->get("complet_soutenance")["salle"]); //pour la recupeation en post
+            //on va pre remplir l'objet soutenance pour la mise a jour
+            $soutenance->setSalle($formSoutenance->getData()->getSalle())
+                ->setType($formSoutenance->getData()->getTypeSoutenance())
+                ->setDate($formSoutenance->getData()->getDate());
+            $this->em->persist($soutenance);
+            $this->em->flush();
+            $this->addFlash(
+                'success',
+                'Soutenance Modifiée avec succès'
+            );
+            return $this->redirectToRoute('gest_soutenance');
+        }
+        return $this->render(
+            "index/edit_soutenance.html.twig",
+            [
+                'soutenance' => $soutenance,
+                'etudiants_soutenance' => $etudiants_soutenance,
+                'jurys' => $jurys,
+                'formSoutenance' => $formSoutenance->createView(),
+                'formReponse' => $formReponse->createView()
             ]
         );
     }

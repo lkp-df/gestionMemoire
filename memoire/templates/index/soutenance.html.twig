@@ -1,206 +1,223 @@
-{% extends "base.html.twig" %} {% block title %}Gestion des soutenances {% endblock %} {% block body %}
-<br>
-<div class="row">
-    <div class="col-md-4"></div>
-    <div class="col-md-4">
-        <button class="btn btn-success" id="soutenance">Nouvelle Soutenance</button>
-    </div>
-    <div class="col-md-4"></div>
-</div>
+{% extends "base.html.twig" %}
+{% block title %}Gestion des soutenances
+{% endblock %}
+{% block body %}
+	<br>
 
-{{form_start(formSoutenance,{"attr":{"id":"show_soutenance"}})}}
-<div class="row">
-    <div class="col-lg-4">
-        <div class="form-group mb-3">
-            {{form_row(formSoutenance.date)}}
-        </div>
-        <div class="form-group mb-3">
-            {{form_row(formSoutenance.salle)}}
-        </div>
-        <div class="form-group mb-3">
-            {{form_row(formSoutenance.typeSoutenance)}}
-        </div>
-        <div class="form-group mb-3 mb-3">
-            <h5 class="mt-3">
-                <b>Partie des Jurys</b>
-            </h5>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Jury</th>
-                        <th scope="col">Poste du jury</th>
-                    </tr>
-                </thead>
-                <tbody id="affiche_jury"></tbody>
-            </table>
-            <div style="float: right;">
-                <a href="#" class="btn btn-success" id="add_jury">+</a>
-                <a href="#" class="btn btn-danger" id="remove_jury">-</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-8">
-        <div class="form-group mb-3">
-            <h5 class="mt-3">
-                <b>Ajout des Elèves Ayant Soutenu(e)s</b>
-            </h5>
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nom Elève</th>
-                        <th scope="col">Encadreur</th>
-                        <th scope="col">Thème</th>
-                        <th scope="col">Note Obt.</th>
-                    </tr>
-                </thead>
-                <tbody id="affiche_eleve">
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-dismissible alert-success" role="alert">
+			<button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
+			<strong>{{message}}</strong>
+		</div>
+	{% endfor %}
+	<br>
+	<div class="row">
+		<div class="col-md-4"></div>
+		<div class="col-md-4">
+			<button class="btn btn-success" id="soutenance">Nouvelle Soutenance</button>
+		</div>
+		<div class="col-md-4"></div>
+	</div>
 
-                </tbody>
-            </table>
-            <div style="float: right;">
-                <a href="#" class="btn btn-success" id="add_eleve">+</a>
-                <a href="#" class="btn btn-danger" id="remove_eleve">-</a>
-            </div>
-        </div>
-    </div>
-</div>
+	{{form_start(formSoutenance,{"attr":{"id":"show_soutenance"}})}}
+	<div class="row">
+		<div class="col-lg-4">
+			<div class="form-group mb-3">
+				{{form_row(formSoutenance.date)}}
+			</div>
+			<div class="form-group mb-3">
+				{{form_row(formSoutenance.salle)}}
+			</div>
+			<div class="form-group mb-3">
+				{{form_row(formSoutenance.typeSoutenance)}}
+			</div>
+			<div class="form-group mb-3 mb-3">
+				<h5 class="mt-3">
+					<b>Partie des Jurys</b>
+				</h5>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Jury</th>
+							<th scope="col">Poste du jury</th>
+							<th scope="col">
+								<div style="float: right;">
+									<a href="#" class="btn btn-success" id="add_jury">+</a>
+									<a href="#" class="btn btn-danger" id="remove_jury">-</a>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tbody id="affiche_jury"></tbody>
+				</table>
 
-<div class="row">
-    <div class="col-lg-6">
-        <div class="form-group mb-3">
-            <button class="btn btn-primary">Enregister la soutenance</button>
-        </div>
-    </div>
-</div>
-{{form_end(formSoutenance)}}
-<br>
-<h3>Gestion des soutenances</h3><br>
-<div class="row">
-    {% if soutenances %}
-    <table class="table table-hover">
-        <thead>
-            <tr class="table-primary">
-                <th scope="col">#</th>
-                <th scope="col">Date</th>
-                <th scope="col">Salle</th>
-                <th scope="col">Soutenance Type</th>
-                <th scope="col">Année Soutenance</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% set i = 0 %} {% for soutenance in soutenances %}
-            <tr>
-                <th scope="row">{% set i = i + 1%}{{i}}</th>
-                <td>{{soutenance.date}}</td>
-                <td>{{soutenance.salle}}</td>
-                <td>{{soutenance.type}}</td>
-                <td>{{soutenance.date | date("Y")}}</td>
-                <td>
-                    <a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
-                        <i class="fas fa-eye"></i>
-                    </a>&nbsp;
-                    <a href="#" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
-                        <i class="fas fa-edit"></i>
-                    </a>&nbsp;
-                    <a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
-                        <i class="fas fa-trash-alt"></i>
-                    </a>&nbsp;
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>{% else %}Aucune Soutenance Organisée {% endif %}
+			</div>
+		</div>
+		<div class="col-lg-8">
+			<div class="form-group mb-3">
+				<h5 class="mt-3">
+					<b>Ajout des Elèves Ayant Soutenu(e)s</b>
+				</h5>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th scope="col">#</th>
+							<th scope="col">Nom Elève</th>
+							<th scope="col">Encadreur</th>
+							<th scope="col">Thème</th>
+							<th scope="col">Note Obt.</th>
+						</tr>
+					</thead>
+					<tbody id="affiche_eleve"></tbody>
+				</table>
+				<div style="float: right;">
+					<a href="#" class="btn btn-success" id="add_eleve">+</a>
+					<a href="#" class="btn btn-danger" id="remove_eleve">-</a>
+				</div>
+			</div>
+		</div>
+	</div>
 
-</div> {% endblock %} {% block javascripts %}
-<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
-<script src="{{asset('js/bootstrap.min.js')}}"></script>
-<script>
-    $(document).ready(function() {
-        $("#show_soutenance").hide();
-        $("#soutenance").click(function() {
-            $("#show_soutenance").toggle();
-        })
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="form-group mb-3">
+				<button class="btn btn-primary">Enregister la soutenance</button>
+			</div>
+		</div>
+	</div>
+	{{form_end(formSoutenance)}}
+	<br>
+	<h3>Gestion des soutenances</h3><br>
+	<div class="row">
+		{% if soutenances %}
+			<table class="table table-hover">
+				<thead>
+					<tr class="table-primary">
+						<th scope="col">#</th>
+						<th scope="col">Date</th>
+						<th scope="col">Salle</th>
+						<th scope="col">Soutenance Type</th>
+						<th scope="col">Année Soutenance</th>
+						<th scope="col">Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% set i = 0 %}
+					{% for soutenance in soutenances %}
+						<tr>
+							<th scope="row">{% set i = i + 1%}{{i}}</th>
+							<td>{{soutenance.date | date("d-m-Y")}}</td>
+							<td>{{soutenance.salle}}</td>
+							<td>{{soutenance.type}}</td>
+							<td>{{soutenance.date | date("Y")}}</td>
+							<td>
+								<a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
+									<i class="fas fa-eye"></i>
+								</a>&nbsp;
+								<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
+									<i class="fas fa-edit"></i>
+								</a>&nbsp;
+								<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
+									<i class="fas fa-trash-alt"></i>
+								</a>&nbsp;
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% else %}Aucune Soutenance Organisée
+		{% endif %}
 
-        afficheJury();
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
+	<script src="{{asset('js/bootstrap.min.js')}}"></script>
+	<script>
+		$(document).ready(function () {
+$("#show_soutenance").hide();
+$("#soutenance").click(function () {
+$("#show_soutenance").toggle();
+})
 
-        function afficheJury() {
-            $.ajax({
-                url: "{{ path('gest_soutenance') }}",
-                method: "POST",
-                dataType: "JSON",
-                data: {
-                    afficheJury: 1
-                },
-                success: function(data) {
-                    $("#affiche_jury").append(data);
+afficheJury();
 
-                    let num = 0;
-                    $(".numero").each(function() {
-                        $(this).html(++num);
-                    })
-                }
+function afficheJury() {
+$.ajax({
+url: "{{ path('gest_soutenance') }}",
+method: "POST",
+dataType: "JSON",
+data: {
+afficheJury: 1
+},
+success: function (data) {
+$("#affiche_jury").append(data);
 
-            })
-        }
-        $("#add_jury").on("click", function() {
-            afficheJury();
-        })
-        $("#remove_jury").click(function() { // enleve moi la derniere ligne de mon tableau
-            $("#affiche_jury").children("tr:last").remove();
-        })
+let num = 0;
+$(".numero").each(function () {
+$(this).html(++ num);
+})
+}
 
-        affiche_eleve();
+})
+}
+$("#add_jury").on("click", function () {
+afficheJury();
+})
+$("#remove_jury").click(function () { // enleve moi la derniere ligne de mon tableau
+$("#affiche_jury").children("tr:last").remove();
+})
 
-        function affiche_eleve() {
-            $.ajax({
-                url: "{{path('gest_soutenance')}}",
-                method: "POST",
-                dataType: "JSON",
-                data: {
-                    affiche_eleve: 1
-                },
-                success: function(data) {
-                    $("#affiche_eleve").append(data);
-                    let num = 0;
-                    $(".numero_eleve").each(function() {
-                        $(this).html(++num);
-                    })
-                }
-            })
-        }
+affiche_eleve();
 
-        $("#add_eleve").click(function() {
-            affiche_eleve();
-        })
+function affiche_eleve() {
+$.ajax({
+url: "{{ path('gest_soutenance') }}",
+method: "POST",
+dataType: "JSON",
+data: {
+affiche_eleve: 1
+},
+success: function (data) {
+$("#affiche_eleve").append(data);
+let num = 0;
+$(".numero_eleve").each(function () {
+$(this).html(++ num);
+})
+}
+})
+}
 
-        $("#remove_eleve").click(function() {
-            $("#affiche_eleve").children("tr:last").remove();
-        })
+$("#add_eleve").click(function () {
+affiche_eleve();
+})
 
-        //afficher les infos complementaire de l'etudiant
-        $("#affiche_eleve").delegate(".id", "change", function() {
-            let id = $(this).val();
+$("#remove_eleve").click(function () {
+$("#affiche_eleve").children("tr:last").remove();
+})
 
-            //afin de savoir dans quelle ligne inserer les donnees (trouver la ligne courante)
-            var ligne = $(this).parent().parent(); //ligne courante
+// afficher les infos complementaire de l'etudiant
+$("#affiche_eleve").delegate(".id", "change", function () {
+let id = $(this).val();
 
-            $.ajax({
-                url: "{{path('gest_soutenance')}}",
-                method: "POST",
-                dataType: "JSON",
-                data: {
-                    showEl: 1,
-                    idEl: id
-                },
-                success: function(data) {
-                    ligne.find(".encadreur").val(data["pren_encadreur"] + " " + data["nom_encadreur"]);
-                    ligne.find(".theme").val(data["theme"]);
-                }
-            })
-        })
-    })
-</script>
+// afin de savoir dans quelle ligne inserer les donnees (trouver la ligne courante)
+var ligne = $(this).parent().parent(); // ligne courante
+
+$.ajax({
+url: "{{ path('gest_soutenance') }}",
+method: "POST",
+dataType: "JSON",
+data: {
+showEl: 1,
+idEl: id
+},
+success: function (data) {
+ligne.find(".encadreur").val(data["pren_encadreur"] + " " + data["nom_encadreur"]);
+ligne.find(".theme").val(data["theme"]);
+}
+})
+})
+})
+	</script>
 {% endblock %}

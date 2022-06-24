@@ -1,0 +1,242 @@
+{% extends "base.html.twig" %}
+{% block title %}Gestion Soutenance | Edition
+{% endblock %}
+{% block body %}
+
+	<br>
+	<div class="container">
+
+		<div class="row mb-3">
+			<div class="col-md-8 col-lg-8 mx-auto d-block">
+				<div class="card">
+					<div class="card-header bg-success text-white">info de la soutenance</div>
+					{{form_start(formSoutenance)}}
+					<div class="card-body">
+						<div class="form-group mb-4">
+							{{form_row(formSoutenance.salle)}}
+						</div>
+						<div class="form-group mb-4">
+							{{form_row(formSoutenance.typeSoutenance)}}
+						</div>
+						<div class="form-group mb-4">
+							{{form_row(formSoutenance.date)}}
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="btn-group">
+									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+										<i class="fas fa-arrow-left"></i>
+										Retour
+									</a>
+									<button type="submit" class="btn btn-success btn-xm">Modifier</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					{{form_end(formSoutenance)}}
+				</div>
+			</div>
+		</div>
+
+		<div class="row mb-3">
+			<div class="col-md-12 col-lg-12">
+				<div class="card">
+					<div class="card-header card-header bg-success text-white">
+						Les jurys présents à la soutenance
+					</div>
+					<div class="card-body">
+						<table class="table table-hover mb-2">
+							<thead>
+								<tr>
+									<th scope="col">Prénom / Nom</th>
+									<th scope="col">Titre</th>
+									<th scope="col">Position</th>
+									<th scope="col">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for jury in jurys %}
+									<tr>
+										<td>{{jury.encadreur.prenom ~" "~jury.encadreur.nom}}</td>
+										<td>
+											{{jury.encadreur.titre}}
+										</td>
+										<td>
+											{{jury.titre}}
+										</td>
+										<td>
+											<a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
+												<i class="fas fa-eye"></i>
+											</a>&nbsp;
+											<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
+												<i class="fas fa-edit"></i>
+											</a>&nbsp;
+											<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
+												<i class="fas fa-trash-alt"></i>
+											</a>&nbsp;
+										</td>
+									</tr>
+								{% else %}
+									<tr>
+										No jury
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+						{{form_start(formReponse)}}
+						{{form_row(formReponse.reponse)}}
+						<div id="table_jury">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th scope="col">Jury</th>
+										<th scope="col">Poste</th>
+										<th scope="col">Actions</th>
+									</tr>
+								</thead>
+								<tbody id="affiche_jury"></tbody>
+							</table>
+							<div class="row">
+								<div class="col-md-4"></div>
+								<div class="col-md-4 btn-group">
+
+									<a href="#" id="add_jury" class="btn btn-primary">+</a>
+									<button type="submit" class="btn btn-success btn-xm">Soumettre</button>
+
+								</div>
+								<div class="col-xm-4"></div>
+							</div>
+						</div>
+						{{form_end(formReponse)}}
+					</div>
+					<div class="card-footer">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="btn-group">
+									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+										<i class="fas fa-arrow-left"></i>
+										Retour
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-12 mt-3">
+				<div class="card ">
+					<div class="card-header bg-success text-white">
+						Listes des etudiants presents à la soutenance
+					</div>
+					<div class="card-body">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th scope="col">Prénom</th>
+									<th scope="col">Nom</th>
+									<th scope="col">Mémoire</th>
+									<th scope="col">Année</th>
+									<th scope="col">Filière</th>
+									<th scope="col">Encadreur</th>
+									<th scope="col">Note Soutenance</th>
+									<th scope="col">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for etudiantSoutenance in etudiants_soutenance %}
+									<tr>
+										<td>
+											{{etudiantSoutenance.etudiant.prenom}}</td>
+										<td>
+											{{etudiantSoutenance.etudiant.nom}}
+										</td>
+										<td>
+											{{etudiantSoutenance.etudiant.memoire.theme}}</td>
+										<td>
+											{{etudiantSoutenance.etudiant.memoire.annee}}</td>
+										<td>{{etudiantSoutenance.etudiant.filiere.codeFiliere}}</td>
+										<td>
+											{{etudiantSoutenance.etudiant.encadreur.prenom
+                    ~ " "~ etudiantSoutenance.etudiant.encadreur.nom }}</td>
+										<td>{{etudiantSoutenance.noteSoutenance }}</td>
+										<td>
+											<a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
+												<i class="fas fa-eye"></i>
+											</a>&nbsp;
+											<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
+												<i class="fas fa-edit"></i>
+											</a>&nbsp;
+											<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
+												<i class="fas fa-trash-alt"></i>
+											</a>&nbsp;
+										</td>
+									</tr>
+								{% else %}
+									<tr>
+										no students
+									</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+
+						<br>
+					</div>
+					<div class="card-footer">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="btn-group">
+									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+										<i class="fas fa-arrow-left"></i>
+										Retour
+									</a>
+									<button type="submit" class="btn btn-success btn-xm">Modifier</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
+	<script src="{{asset('js/bootstrap.min.js')}}"></script>
+
+	<script>
+		// partie des functions
+// ajouter un jury à la soutenance
+afficheJury();
+function afficheJury() {
+$.ajax({
+url:'{{ path('edit_soutenance',{'id':soutenance.id}) }}',
+method: 'POST',
+dataType: 'JSON',
+data: {
+afficheJury: 1
+},
+success: function (data) {
+$('#affiche_jury').append(data);
+}
+})
+}
+// partie
+$("#add_jury").on("click", function () {
+afficheJury();
+});
+$(document).on("click", "#remove_jury", function () { // enleve moi le dernier element
+$(this).closest("tr").remove();
+});
+$("#table_jury").hide(500);
+$("#reponse_reponse_1").click(function () {
+$("#table_jury").hide(500);
+})
+$("#reponse_reponse_0").click(function () {
+$("#table_jury").show(500);
+})
+	</script>
+{% endblock %}
