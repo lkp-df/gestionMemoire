@@ -1,242 +1,672 @@
-{% extends "base.html.twig" %}
-{% block title %}Gestion Soutenance | Edition
-{% endblock %}
+{% extends "base.html.twig" %} 
+{% import "macros/modal.html.twig" as modal %}
+{% block title %}Gestion Soutenance | Edition {% endblock %} 
 {% block body %}
 
-	<br>
-	<div class="container">
+<br>
+<div class="container">
 
-		<div class="row mb-3">
-			<div class="col-md-8 col-lg-8 mx-auto d-block">
-				<div class="card">
-					<div class="card-header bg-success text-white">info de la soutenance</div>
-					{{form_start(formSoutenance)}}
-					<div class="card-body">
-						<div class="form-group mb-4">
-							{{form_row(formSoutenance.salle)}}
-						</div>
-						<div class="form-group mb-4">
-							{{form_row(formSoutenance.typeSoutenance)}}
-						</div>
-						<div class="form-group mb-4">
-							{{form_row(formSoutenance.date)}}
-						</div>
-						<div class="row">
-							<div class="col-md-6">
-								<div class="btn-group">
-									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
-										<i class="fas fa-arrow-left"></i>
-										Retour
-									</a>
-									<button type="submit" class="btn btn-success btn-xm">Modifier</button>
-								</div>
-							</div>
-						</div>
-					</div>
-					{{form_end(formSoutenance)}}
-				</div>
-			</div>
-		</div>
+    <div class="row mb-3">
+        <div class="col-md-8 col-lg-8 mx-auto d-block">
+            <div class="card">
+                <div class="card-header bg-success text-white">info de la soutenance</div>
+                {{form_start(formSoutenance)}}
+                <div class="card-body">
+                    <div class="form-group mb-4">
+                        {{form_row(formSoutenance.salle)}}
+                    </div>
+                    <div class="form-group mb-4">
+                        {{form_row(formSoutenance.typeSoutenance)}}
+                    </div>
+                    <div class="form-group mb-4">
+                        {{form_row(formSoutenance.date)}}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                                <button type="submit" class="btn btn-success btn-xm">Modifier</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{form_end(formSoutenance)}}
+            </div>
+        </div>
+    </div>
 
-		<div class="row mb-3">
-			<div class="col-md-12 col-lg-12">
-				<div class="card">
-					<div class="card-header card-header bg-success text-white">
-						Les jurys présents à la soutenance
-					</div>
-					<div class="card-body">
-						<table class="table table-hover mb-2">
-							<thead>
-								<tr>
-									<th scope="col">Prénom / Nom</th>
-									<th scope="col">Titre</th>
-									<th scope="col">Position</th>
-									<th scope="col">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for jury in jurys %}
-									<tr>
-										<td>{{jury.encadreur.prenom ~" "~jury.encadreur.nom}}</td>
-										<td>
-											{{jury.encadreur.titre}}
-										</td>
-										<td>
-											{{jury.titre}}
-										</td>
-										<td>
-											<a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
-												<i class="fas fa-eye"></i>
-											</a>&nbsp;
-											<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
-												<i class="fas fa-edit"></i>
-											</a>&nbsp;
-											<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
-												<i class="fas fa-trash-alt"></i>
-											</a>&nbsp;
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										No jury
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
-						{{form_start(formReponse)}}
-						{{form_row(formReponse.reponse)}}
-						<div id="table_jury">
-							<table class="table table-hover">
-								<thead>
-									<tr>
-										<th scope="col">Jury</th>
-										<th scope="col">Poste</th>
-										<th scope="col">Actions</th>
-									</tr>
-								</thead>
-								<tbody id="affiche_jury"></tbody>
-							</table>
-							<div class="row">
-								<div class="col-md-4"></div>
-								<div class="col-md-4 btn-group">
+    <div class="row mb-3">
+        <div class="col-md-12 col-lg-12">
+            <div class="card">
+                <div class="card-header card-header bg-success text-white">
+                    Les jurys présents à la soutenance
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover mb-2">
+                        <thead>
+                            <tr>
+                                <th scope="col">Prénom / Nom</th>
+                                <th scope="col">Titre</th>
+                                <th scope="col">Position</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for jury in jurys %}
+                            <tr>
+                                <td>{{jury.encadreur.prenom ~" "~ jury.encadreur.nom}}</td>
+                                <td>
+                                    {{jury.encadreur.titre}}
+                                </td>
+                                <td>
+                                    {{jury.titre}}
+                                </td>
+                                <td>
+                                    <a href="#"
+                                     data-toggle="tooltip"
+                                     class="btn btn-dark show_jury"
+                                     data-placement="top"
+                                     title="voir les détails"
+                                     data-toggle="modal"
+                                     data-id="{{jury.id}}"
+                                     data-path="{{path('edit_soutenance_show_jury_in_soutenance',{'id':soutenance.id,'id_jury':jury.id})}}"
+                                     >
+                                        <i class="fas fa-eye"></i>
+                                    </a>&nbsp;
+                                    <a href="#" 
+									 class="btn btn-success id_jury" 
+									 data-placement="top" 
+									 title="Modifier" 
+                                     data-id="{{jury.id}}"
+                                     data-path="{{path('edit_soutenance_show_position_jury', {'id': soutenance.id,'id_jury':jury.id})}}"
+									 data-toggle="modal"
+									 data-toggle="tooltip"
+									 >
+                                        <i class="fas fa-edit"></i>
+                                    </a>&nbsp;
+                                    <a  class="btn btn-danger del_jury"
+									 data-id="{{jury.id}}" data-path="{{path('del_jury',{'id':jury.id})}}" data-toggle="tooltip" data-placement="top" title="supprimer">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </a>&nbsp;
+                                </td>
+                            </tr>
+							
+                            {% else %}
+                            <tr>
+                                No jury
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {{form_start(formReponse)}} {{form_row(formReponse.reponse)}}
+                    <div id="table_jury">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Jury</th>
+                                    <th scope="col">Poste</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="affiche_jury"></tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 btn-group">
 
-									<a href="#" id="add_jury" class="btn btn-primary">+</a>
-									<button type="submit" class="btn btn-success btn-xm">Soumettre</button>
+                                <a href="#" id="add_jury" class="btn btn-primary">+</a>
+                                <button type="submit" class="btn btn-success btn-xm">Soumettre</button>
 
-								</div>
-								<div class="col-xm-4"></div>
-							</div>
-						</div>
-						{{form_end(formReponse)}}
-					</div>
-					<div class="card-footer">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="btn-group">
-									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
-										<i class="fas fa-arrow-left"></i>
-										Retour
-									</a>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                            </div>
+                            <div class="col-xm-4"></div>
+                        </div>
+                    </div>
+                    {{form_end(formReponse)}}
+                </div>
+                <div class="card-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-		<div class="row">
-			<div class="col-md-12 mt-3">
-				<div class="card ">
-					<div class="card-header bg-success text-white">
-						Listes des etudiants presents à la soutenance
-					</div>
-					<div class="card-body">
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th scope="col">Prénom</th>
-									<th scope="col">Nom</th>
-									<th scope="col">Mémoire</th>
-									<th scope="col">Année</th>
-									<th scope="col">Filière</th>
-									<th scope="col">Encadreur</th>
-									<th scope="col">Note Soutenance</th>
-									<th scope="col">Actions</th>
-								</tr>
-							</thead>
-							<tbody>
-								{% for etudiantSoutenance in etudiants_soutenance %}
-									<tr>
-										<td>
-											{{etudiantSoutenance.etudiant.prenom}}</td>
-										<td>
-											{{etudiantSoutenance.etudiant.nom}}
-										</td>
-										<td>
-											{{etudiantSoutenance.etudiant.memoire.theme}}</td>
-										<td>
-											{{etudiantSoutenance.etudiant.memoire.annee}}</td>
-										<td>{{etudiantSoutenance.etudiant.filiere.codeFiliere}}</td>
-										<td>
-											{{etudiantSoutenance.etudiant.encadreur.prenom
-                    ~ " "~ etudiantSoutenance.etudiant.encadreur.nom }}</td>
-										<td>{{etudiantSoutenance.noteSoutenance }}</td>
-										<td>
-											<a href="{{path('view_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-dark" data-placement="top" title="voir les détails">
-												<i class="fas fa-eye"></i>
-											</a>&nbsp;
-											<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
-												<i class="fas fa-edit"></i>
-											</a>&nbsp;
-											<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
-												<i class="fas fa-trash-alt"></i>
-											</a>&nbsp;
-										</td>
-									</tr>
-								{% else %}
-									<tr>
-										no students
-									</tr>
-								{% endfor %}
-							</tbody>
-						</table>
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card ">
+                <div class="card-header bg-success text-white">
+                    Listes des etudiants presents à la soutenance
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Prénom</th>
+                                <th scope="col">Nom</th>
+                                <th scope="col">Mémoire</th>
+                                <th scope="col">Année</th>
+                                <th scope="col">Filière</th>
+                                <th scope="col">Encadreur</th>
+                                <th scope="col">Note Soutenance</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for etudiantSoutenance in etudiants_soutenance %}
+                            <tr>
+                                <td>
+                                    {{etudiantSoutenance.etudiant.prenom}}</td>
+                                <td>
+                                    {{etudiantSoutenance.etudiant.nom}}
+                                </td>
+                                <td>
+                                    {{etudiantSoutenance.etudiant.memoire.theme}}</td>
+                                <td>
+                                    {{etudiantSoutenance.etudiant.memoire.annee}}</td>
+                                <td>{{etudiantSoutenance.etudiant.filiere.codeFiliere}}</td>
+                                <td>
+                                    {{etudiantSoutenance.etudiant.encadreur.prenom ~ " "~ etudiantSoutenance.etudiant.encadreur.nom }}</td>
+                                <td>{{etudiantSoutenance.noteSoutenance }}</td>
+                                <td>
+                                    <a  
+                                    data-toggle="modal"
+                                    data-id="{{etudiantSoutenance.id}}"
+                                    data-path="{{ path('edit_soutenance_show_eleve_in_soutenance',{'id':soutenance.id,'id_etu':etudiantSoutenance.id}) }}"
+                                    data-toggle="tooltip"
+                                    class="btn btn-dark show_eleve"
+                                    data-placement="top"
+                                    title="voir les détails">
+                                        <i class="fas fa-eye"></i>
+                                    </a>&nbsp;
 
-						<br>
-					</div>
-					<div class="card-footer">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="btn-group">
-									<a href="{{path('gest_soutenance')}}" class="btn btn-dark">
-										<i class="fas fa-arrow-left"></i>
-										Retour
-									</a>
-									<button type="submit" class="btn btn-success btn-xm">Modifier</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+                                    <a
+                                     data-toggle="modal"
+                                     data-id="{{etudiantSoutenance.id}}"
+                                     data-path="{{path('edit_soutenance_show_eleve_in_soutenance_mod',{'id':soutenance.id,'id_etu':etudiantSoutenance.id})}}"
+                                     data-toggle="tooltip"
+                                     class="btn btn-success edit_eleve"
+                                     data-placement="top"
+                                      title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>&nbsp;
+                                    <a  
+                                      data-toggle="tooltip"
+                                     class="btn btn-danger del_etu" 
+                                     data-placement="top" 
+                                     data-id="{{etudiantSoutenance.id}}"
+                                     data-path="{{path('del_eleve',{'id':etudiantSoutenance.id})}}"
+                                     title="supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                    </a>&nbsp;
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                no students
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {{form_start(formReponseAjoutEtudiant)}} 
+                    {{form_row(formReponseAjoutEtudiant.reponse)}}
+                    <div id="table_etudiant">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Elève</th>
+                                    <th scope="col">Encadreur</th>
+                                    <th scope="col">Thème Mémoire</th>
+                                    <th scope="col">Note Soutenance</th>
+                                    <th scope="col">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="affiche_etudiant"></tbody>
+                        </table>
+                        <div class="row">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-4 btn-group">
+                                <a href="#" id="add_etudiant" class="btn btn-primary">+</a>
+                                <button type="submit" class="btn btn-success btn-xm">Soumettre</button>
+                            </div>
+                            <div class="col-xm-4"></div>
+                        </div>
+                    </div>
+                    {{form_end(formReponseAjoutEtudiant)}}
 
-			</div>
-		</div>
-	</div>
-{% endblock %}
+                    <br>
+                </div>
+                <div class="card-footer mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="btn-group">
+                                <a href="{{path('gest_soutenance')}}" class="btn btn-dark">
+                                    <i class="fas fa-arrow-left"></i> Retour
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {# modal #}
+    {{modal.modal_brut('positionJuryModal','Modifiez La Position du Jury')}}
+    {{modal.modal_brut('showJuryModal','Informations du Jury','modal-xl')}}
+    {{modal.modal_brut('showEtudiantModal','Informations de L \'Etudiant','modal-xl')}}
+    {{modal.modal_brut('editEtudiantModal','Modifiez Infos de L \'Etudiant')}}
+
+</div>
+
+{% endblock %} 
 {% block javascripts %}
-	<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
-	<script src="{{asset('js/bootstrap.min.js')}}"></script>
+<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{asset('js/sweetAlert2/sweetalert2.all.min.js')}}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 
-	<script>
-		// partie des functions
-// ajouter un jury à la soutenance
-afficheJury();
-function afficheJury() {
-$.ajax({
-url:'{{ path('edit_soutenance',{'id':soutenance.id}) }}',
-method: 'POST',
-dataType: 'JSON',
-data: {
-afficheJury: 1
-},
-success: function (data) {
-$('#affiche_jury').append(data);
-}
-})
-}
-// partie
-$("#add_jury").on("click", function () {
-afficheJury();
+
+
+<script>
+    // partie des functions
+    // ajouter un jury à la soutenance
+    afficheJury();
+
+    function afficheJury() {
+        $.ajax({
+            url: '{{ path('edit_soutenance',{'id':soutenance.id}) }}',
+            method: 'POST',
+            dataType: 'JSON',
+            data: {
+                afficheJury: 1
+            },
+            success: function(data) {
+                $('#affiche_jury').append(data);
+            }
+        })
+    }
+    afficheEleve();
+    function afficheEleve(){
+        $.ajax({
+            url:'{{ path('edit_soutenance',{'id':soutenance.id}) }}',
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                afficheEleve: 1
+            },
+            success:function(data){
+                //alert(data)
+                $('#affiche_etudiant').append(data);
+            }
+        });
+    }
+/////////////////////////////////////////////////////////////////////////////
+    //etudiant
+    $(document).on('click','.del_etu',function(){
+        let idEtu = $(this).data('id');
+        let pathDelEleve = $(this).data('path');
+
+        Swal.fire({
+		title: 'Êtes vous Sûr de la Suppression?',
+		text: "Vous ne serez plus capable de le restaurer!",
+		icon: 'warning',
+		showCancelButton: true,
+		cancelButtonText:'Annuler',
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Oui, Supprimer!'
+		}).then((result) => {
+		if (result.isConfirmed) {
+			$.ajax({
+				url: pathDelEleve,
+				method:'POST',
+				dataType:'JSON',
+				data:{idEleve: idEtu},
+				success:function(data){
+					if(data == 'success'){
+						Swal.fire(
+							'Supprimé!',
+							'L\'etudiant a été supprimé de la soutenance',
+							'success'
+							);
+							 location.reload();
+					}else{
+						swalWithBootstrapButtons.fire(
+							'Annulation',
+							'L\'etudiant n\'a pas été supprimé:)',
+							'error'
+							)
+						}
+				}
+			});
+			
+		}
+	}); 
+        
+    });
+
+    $(document).on('click','.show_eleve',function(e){
+        e.preventDefault();
+        let id = $(this).data('id');
+        let path = $(this).data('path');
+        //lancement de la modale
+        $('#showEtudiantModal').modal('show');
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                modal:'infoEleve',
+                id_Eleve:id
+            },
+            beforeSend:function(){
+                $('.modal-loader').css('display','flex');
+            },
+            success:function(data){
+               $('.modal-loader').css('display','none');
+               $('#showEtudiantModal .modal-body').html(data.content);
+            },
+            error:function(){
+              $('.modal-loader').css('display','none');
+              Swal.fire('Informations Non Disponible, veuillez Réessayer');
+
+            }
+        }); 
+        
+    });
+
+    $(document).on('click','.edit_eleve',function(e){
+        e.preventDefault();
+        let id = $(this).data('id');
+        let path = $(this).data('path');
+
+        //lancement de la modal
+        $('#editEtudiantModal').modal('show');
+
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                modal:'modifEleve',
+                idEleveMod:id
+            },
+            beforeSend:function(){
+            $('.modal-loader').css('display','flex');
+            }
+            ,
+            success:function(data){
+               $('.modal-loader').css('display','none');
+               $('#editEtudiantModal .modal-body').html(data.content);
+            },
+            error:function(){
+              $('.modal-loader').css('display','none');
+              Swal.fire('Informations Non Disponible, veuillez Réessayer');
+            }
+
+        });
+
+    });
+
+    $(document).on('click','.edit_note',function(){
+        let id = $(this).data('id');
+        let path = $(this).data('path');
+        let note = $('#note').val();
+
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                idEtuEdit:id,
+                noteEtu:note,
+                modification:'editNoteSoutenance'
+            },
+            success:function(data){
+                if(data == 'success'){
+                    Swal.fire(
+                        'Modification Reussie!',
+                        'La Note de l\'étudiant a été Modifiée',
+                        'success'
+                        );
+                       location.reload();
+                }else{
+                    swalWithBootstrapButtons.fire(
+                        'Annulation',
+                        'Modification Impossible :)',
+                        'error'
+                        );
+				}
+            }
+        });
+    });
+
+     $(document).on('click','.edit_encadreur',function(){
+        let id = $(this).data('id');
+        let path = $(this).data('path');
+        let encadreur = $('#encadreur').val();
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                idEtuEdit:id,
+                encadreurId:encadreur,
+                modification:'editProfSoutenance'
+            },
+            success:function(data){
+                if(data == 'success'){
+                    Swal.fire(
+                        'Modification Reussie!',
+                        'L\'Encadreur a été Modifiée',
+                        'success'
+                        );
+                       location.reload();
+                }else{
+                    swalWithBootstrapButtons.fire(
+                        'Annulation',
+                        'Modification Impossible :)',
+                        'error'
+                        );
+				}
+            }
+        });
+    });
+
+    $('#affiche_etudiant').on('change','.idEtu',function(){
+        let idEtu = $(".idEtu").val();
+        let ligne = $(this).parent().parent();
+       $.ajax({
+            url:'{{path('edit_soutenance',{'id':soutenance.id})}}',
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                idEtuShow:idEtu
+            },
+            success:function(data){
+                ligne.find(".encadreur").val(data["pren_encadreur"] + " " + data["nom_encadreur"]);
+                ligne.find(".theme").val(data["theme"]);
+            }
+        })
+    });
+
+    //jury
+    $(document).on('click','.show_jury',function(e){
+        e.preventDefault();
+        let path =$(this).data('path');
+        let id_jury = $(this).data('id');
+
+        $('#showJuryModal').modal('show');
+
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                modal:'infoJury',
+                id_jury:id_jury
+            },
+            beforeSend:function(){
+                $('.modal-loader').css('display','flex');
+            },
+            success:function(data){
+               $('.modal-loader').css('display','none');
+               $('#showJuryModal .modal-body').html(data.content);
+            },
+            error:function(){
+              $('.modal-loader').css('display','none');
+              Swal.fire('Informations du Jury Non Disponible, veuillez Réessayer');
+
+            }
+        });  
+    });
+
+    $(document).on('click','.id_jury',function(e){
+        e.preventDefault();
+        let id_jury = $(this).data('id');
+        let path = $(this).data('path');
+        //je lance la modale
+        $("#positionJuryModal").modal('show');
+
+        $.ajax({
+            url: path,
+            method:'POST',
+            dataType:'JSON',
+            data: {
+                id_jury: id_jury,
+                modal:'position_jury'
+                },
+                beforeSend:function(){
+                    $('.modal-loader').css('display','flex');
+                },
+            success:function(data){
+                $('.modal-loader').css('display','none');
+                $("#positionJuryModal .modal-body").html(data.content);
+            },
+            error:function(){
+                $('.modal-loader').css('display','none');
+                alert('Modification Impossible');
+            }
+        })
+    });
+
+    $(document).on('click','.modifier_position_jury',function(){
+        let valJury = $('#valueJury').val();
+        let path = $(this).data('path');
+      // alert(path +"  "+ valJury);
+        $.ajax({
+            url:path,
+            method:'POST',
+            dataType:'JSON',
+            data:{
+                valJury:valJury,
+                jury:'modif'
+            },
+            success:function(data){
+                if(data == 'success'){
+                    Swal.fire(
+                        'Modification Reussie!',
+                        'Le Poste du Jury a été Modifié',
+                        'success'
+                        );
+                       location.reload();
+                }else{
+                    swalWithBootstrapButtons.fire(
+                        'Annulation',
+                        'Le Jury n\'a pas été supprimer:)',
+                        'error'
+                        );
+				}
+            }
+        })
+
+    });
+
+$(".del_jury").on("click",function(){
+		id = $(this).data('id');
+		let pathDelJury = $(this).data('path');
+		
+		Swal.fire({
+		title: 'Êtes vous Sûr de la Suppression?',
+		text: "Vous ne serez plus capable de le restaurer!",
+		icon: 'warning',
+		showCancelButton: true,
+		cancelButtonText:'Annuler',
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Oui, Supprimer!'
+		}).then((result) => {
+		if (result.isConfirmed) {
+			$.ajax({
+				url: pathDelJury,
+				method:'POST',
+				dataType:'JSON',
+				data:{idJury: id},
+				success:function(data){
+					if(data == 'success'){
+						Swal.fire(
+							'Supprimé!',
+							'Le Jury a été supprimé de la soutenance',
+							'success'
+							);
+							 location.reload();
+					}else{
+						swalWithBootstrapButtons.fire(
+							'Annulation',
+							'Le Jury n\'a pas été supprimer:)',
+							'error'
+							)
+						}
+				}
+			});
+			
+		}
+	});
 });
-$(document).on("click", "#remove_jury", function () { // enleve moi le dernier element
-$(this).closest("tr").remove();
-});
-$("#table_jury").hide(500);
-$("#reponse_reponse_1").click(function () {
-$("#table_jury").hide(500);
-})
-$("#reponse_reponse_0").click(function () {
-$("#table_jury").show(500);
-})
-	</script>
+    // partie buttons
+    $("#add_jury").on("click", function() {
+        afficheJury();
+    });
+
+    $(document).on("click", ".remove_jury", function() { // enleve moi le dernier element
+        $(this).closest("tr").remove();
+    });
+
+    $("#table_jury").hide(500);
+
+    $("#reponse_jury_reponse_1").click(function() {
+        $("#table_jury").hide(500);
+    });
+    
+    $("#reponse_jury_reponse_0").click(function() {
+        $("#table_jury").show(500);
+    });
+
+    //add etudiant
+    $("#add_etudiant").on("click",function(){
+        afficheEleve();
+    });
+    //remove etudiant
+    $(document).on('click','.remove_etudiant',function(){
+        $(this).closest("tr").remove();
+    });
+
+    $('#table_etudiant').hide(500);
+
+    $('#reponse_etudiant_reponse_0').on('click',function(){
+        $('#table_etudiant').show(500);
+    });
+    
+    $('#reponse_etudiant_reponse_1').on('click',function(){
+        $('#table_etudiant').hide(500);
+    });
+</script>
 {% endblock %}

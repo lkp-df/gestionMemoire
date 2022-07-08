@@ -17,7 +17,8 @@
         {% block stylesheets %}
             <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
             <link rel="icon" href="{{ asset('images/livre-ouvert.jpg') }}">
-            <link rel="stylesheet" href="{{ asset('fontawesome/css/all.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/fontawesome/css/all.min.css') }}">
+            <link rel="stylesheet" href="{{ asset('css/sweetAlert2/sweetalert2.min.css') }}">
         {% endblock %}
 
     </head>
@@ -199,6 +200,7 @@
         {% block javascripts %}
             <script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
             <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+            <script src="{{asset('js/sweetAlert2/sweetalert2.all.min.js')}}"></script>
         {% endblock %}
     </body>
 

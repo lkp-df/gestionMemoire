@@ -1,0 +1,55 @@
+<div class="container">
+	<div class="row mb-2">
+		<div class="col-md-4">
+			<div class="card">
+				<div class="card-header bg-success text-white">Note Actuelle
+					<b>{{noteActuelle}}</b>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+						<label for="exampleInputEmail1">Note</label>
+						<input type="number" class="form-control" id="note" aria-describedby="emailHelp">
+					</div>
+					<button type="submit"
+                     class="btn btn-success mt-2 edit_note"
+                     data-id="{{etudiantSoutenance.id}}" data-path="{{path('edit_soutenance_update_eleve_note_jury_soutenance',{'id':soutenance.id,'id_etu':etudiantSoutenance.id})}}">
+						Modifier la note</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-8">
+			<div class="card">
+				<div class="card-header bg-success text-white">Prof Actuel :
+					<i>
+						<b>
+							{{profActuel.prenom ~" "~ profActuel.nom}}
+						</b>
+					</i>
+				</div>
+				<div class="card-body">
+					<div class="form-group">
+						<label>Encadreur</label>
+						<select class="form-control" id="encadreur">
+							<option>Choisir l'encadreur</option>
+							{% for encadreur in encadreurs %}
+								<option value="{{encadreur.id}}">{{encadreur.prenom ~" " ~ encadreur.nom }}
+									--
+									<i class="bold">{{encadreur.titre}}</i>
+								</option>
+							{% endfor %}
+						</select>
+					</div>
+					<button type="submit"
+                    class="btn btn-success mt-2 edit_encadreur"
+                     data-id="{{etudiantSoutenance.id}}" data-path="{{path('edit_soutenance_update_eleve_note_jury_soutenance',{'id':soutenance.id,'id_etu':etudiantSoutenance.id})}}">
+						Modifier l'encadreur</button>
+
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

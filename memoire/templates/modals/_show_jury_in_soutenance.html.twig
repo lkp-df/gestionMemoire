@@ -1,0 +1,62 @@
+<section>
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="card mb-4 border-0">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Nom(s)</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{jury.encadreur.nom}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Prenom(s)</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{jury.encadreur.prenom}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Titre</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{jury.encadreur.titre}}</p>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3">
+                <p class="mb-0">Pour Cette Soutenance</p>
+              </div>
+              <div class="col-sm-9">
+                <p class="text-muted mb-0">{{jury.titre ~ " "~ "du jury"}}</p>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card mb-4">
+          <div class="card-body text-center">
+            <img src="{{asset('uploads/') ~ jury.encadreur.avatar}}"
+            class="rounded-circle img-fluid" style="width: 200px;">
+            <h5 class="my-3">{{jury.encadreur.prenom ~ " "~ jury.encadreur.nom}} </h5>
+            <p class="text-muted mb-1">{{jury.encadreur.titre}}</p>
+            <div class="d-flex justify-content-center mb-2">
+              {# <button type="button" class="btn btn-outline-primary ms-1">Message</button> #}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<button type="button" class="btn btn-secondary"data-dismiss="modal">Close</button>
+

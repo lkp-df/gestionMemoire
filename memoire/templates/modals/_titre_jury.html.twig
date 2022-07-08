@@ -1,0 +1,16 @@
+<div class="row mb-2">
+        <p>Jury : {{jury.encadreur.prenom ~" "~ jury.encadreur.nom}}</p>
+        <p>Titre Actuel : {{jury.titre ~ " "~ "du jury"}}</p>
+        <select class="form-control form-control col-12" id="valueJury">
+          <option>Choisir le Nouveau Titre du Jury</option>
+          <option value="pres">Président du Jury</option>
+          <option value="memb">Membre du Jury</option>
+        </select> 
+</div>
+<button type="button" 
+  class="btn btn-secondary"
+  data-dismiss="modal"
+  >Close</button>
+<button type="button" class="btn btn-primary modifier_position_jury"
+  data-path="{{path('edit_soutenance_update_position_jury',{'id':soutenance.id,'id_jury':jury.id})}}">Appliquer</button>
+
