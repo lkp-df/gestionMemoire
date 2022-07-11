@@ -141,7 +141,7 @@ class ModalController extends AbstractController
     public function show_eleve_in_soutenance(
         Request $request,
         Soutenance $soutenance,
-        EtudiantSoutenances $etudiantSoutenance,
+        //EtudiantSoutenances $etudiantSoutenance,
         EtudiantSoutenancesRepository $etudiantSoutenancesRepository
     ) {
         if (
