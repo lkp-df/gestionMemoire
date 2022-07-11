@@ -1,71 +1,115 @@
-{% extends "base.html.twig" %} {% block title %}Modification Etudiant {% endblock %} {% block body %}
-<br>
-<h3 style="text-align:center">Modification de l'etudiant&nbsp;</h3><br><br>
+{% extends "base.html.twig" %}
+{% block title %}Modification Etudiant
+{% endblock %}
+{% block body %}
 
-<div class="row"></div>
+	<div class="container mt-3">
+		<h3 style="text-align:center">Modification de l'etudiant&nbsp;</h3><br><br>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header bg-success text-white">Infos Personnelles</div>
+					<div class="card-body">
+						{{form_start(formEtudiant)}}
+						<div class="form-group mb-3 mb-3">{{form_row(formEtudiant.nom)}}</div>
+						<div class="form-group mb-3">{{form_row(formEtudiant.prenom)}}</div>
+						<div class="form-group mb-3">{{form_row(formEtudiant.adresse)}}</div>
+						<div class="form-group mb-3">
+							<div class="btn-group">
+								<a href="{{path('gest_etudiant')}}" class="btn btn-secondary">Annuler la modification
+									<i class="fas fa-arrow-left"></i>
+								</a>
+								<button class="btn btn-success">Modifier</button>
+							</div>
+						</div>
+						{{form_end(formEtudiant)}}
+					</div>
 
-<div class="row">
-    <div class="col-lg-3">
-        <h4>Infos Personnelles</h4>
-        {{form_start(formEtudiant)}}
-        <div class="form-group mb-3 mb-3">{{form_row(formEtudiant.nom)}}</div>
-        <div class="form-group mb-3">{{form_row(formEtudiant.prenom)}}</div>
-        <div class="form-group mb-3">{{form_row(formEtudiant.adresse)}}</div>
-        <div class="form-group mb-3">
-            <button class="btn btn-success">Modifier</button>
-        </div>
-        {{form_end(formEtudiant)}}
-    </div>
-    <div class="col-lg-3">
-        <h4>Détails Mémoire</h4>
-        {{form_start(formMemoire)}}
-        <div class="form-group mb-3">{{form_row(formMemoire.theme)}}</div>
-        <div class="form-group mb-3">{{form_row(formMemoire.annee)}}</div>
-        <div class="form-group mb-3">{{form_row(formMemoire.options)}}</div>
-        <div class="form-group mb-3">
-            <button class="btn btn-success">Modifier</button>
-        </div>
-        {{form_end(formMemoire)}}
-    </div>
-    <div class="col-lg-3">
-        <h4>Filiere de létudiant</h4>
-        {{form_start(form_filiere)}}
-        <div class="form-group mb-3">
-            <label for="">Filière Actuelle</label>
-            <input type="text" class="form-control mb-3" value="{{filiere_nom}}" readonly>
-            <button id="edit_filiere" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Modifier la filière">
-					<i class="fas fa-edit"></i>
-				</button>
-        </div>
-        <div class="form-group mb-3 showFiliere">{{form_row(form_filiere.filiere)}}</div>
-        <br>
-        <button class="btn btn-success">valider la modification</button> {{form_end(form_filiere)}}
-    </div>
-    <div class="col-lg-3">
-        <h4>Son Encadreur</h4>
-        <div class="form-group mb-3">
-            <label for="">Encadreur Actuel</label>
-            <input type="text" class="form-control mb-3" value="{{encadreur_prenom ~" "~ encadreur_nom}}" readonly>
-            <button id="editEncadreur" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="changer d'encadreur">
-					<i class="fas fa-edit"></i>
-				</button>
-            <br>
-        </div>
-        {{form_start(formEncadreur)}}
-        <div class="form-group mb-3 showEncadreur">
-            {{form_row(formEncadreur.encadreur)}}
-            <br>
-            <button class="btn btn-success">valider la modification</button>
-        </div>
-        {{form_end(formEncadreur)}}
-    </div>
-</div>
-<br>
-<div class="row">
-    <div class="col-md-3">
-        <a href="{{path('gest_etudiant')}}" class="btn btn-secondary">Annuler la modification <i class="fas fa-arrow-left"></i></a>
-    </div>
-</div>{% endblock %} {% block javascripts %}
-<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
-<script src="{{asset('js/bootstrap.min.js')}}"></script>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header bg-success text-white">Mémoire Details</div>
+					<div class="card-body">
+						{{form_start(formMemoire)}}
+						<div class="form-group mb-3">{{form_row(formMemoire.theme)}}</div>
+						<div class="form-group mb-3">{{form_row(formMemoire.annee)}}</div>
+						<div class="form-group mb-3">{{form_row(formMemoire.options)}}</div>
+						<div class="form-group mb-3">
+							<div class="btn-group">
+								<a href="{{path('gest_etudiant')}}" class="btn btn-secondary">Annuler la modification
+									<i class="fas fa-arrow-left"></i>
+								</a>
+								<button class="btn btn-success">Modifier</button>
+							</div>
+						</div>
+						{{form_end(formMemoire)}}
+					</div>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-3">
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header bg-success text-white">Filière De l'Etudiant</div>
+					<div class="card-body">
+						{{form_start(form_filiere)}}
+						<div class="form-group mb-3">
+							<label for="">Filière Actuelle</label>
+							<input type="text" class="form-control mb-3" value="{{filiere_nom}}" readonly>
+							<button id="edit_filiere" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="Modifier la filière">
+								<i class="fas fa-edit"></i>
+							</button>
+						</div>
+						<div class="form-group mb-3 showFiliere">
+							{{form_row(form_filiere.filiere)}}
+						</div>
+						<div class="form-group mb-3">
+							<a href="{{path('gest_etudiant')}}" class="btn btn-secondary">Annuler la modification
+								<i class="fas fa-arrow-left"></i>
+							</a>
+							<button class="btn btn-success">Modifier</button>
+
+						</div>
+						{{form_end(form_filiere)}}
+					</div>
+
+				</div>
+			</div>
+
+			<div class="col-md-6">
+				<div class="card">
+					<div class="card-header bg-success text-white">Son Encadreur</div>
+					<div class="card-body">
+						<div class="form-group mb-3">
+							<label for="">Encadreur Actuel</label>
+							<input type="text" class="form-control mb-3" value="{{encadreur_prenom ~" "~ encadreur_nom}}" readonly>
+							<button id="editEncadreur" class="btn btn-primary" data-toggle="tooltip" data-placement="top" title="changer d'encadreur">
+								<i class="fas fa-edit"></i>
+							</button>
+							<br>
+						</div>
+						{{form_start(formEncadreur)}}
+						<div class="form-group mb-3 showEncadreur">
+							{{form_row(formEncadreur.encadreur)}}
+							<div class="btn-group">
+								<a href="{{path('gest_etudiant')}}" class="btn btn-secondary">Annuler la modification
+									<i class="fas fa-arrow-left"></i>
+								</a>
+								<button class="btn btn-success">Modifier</button>
+							</div>
+						</div>
+						{{form_end(formEncadreur)}}
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
+	<script src="{{asset('js/bootstrap.min.js')}}"></script>
 {% endblock %}

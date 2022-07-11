@@ -118,7 +118,12 @@
 								<a href="{{path('edit_soutenance',{'id':soutenance.id})}}" data-toggle="tooltip" class="btn btn-success" data-placement="top" title="Modifier">
 									<i class="fas fa-edit"></i>
 								</a>&nbsp;
-								<a href="#" data-toggle="tooltip" class="btn btn-danger" data-placement="top" title="supprimer">
+								<a data-toggle="tooltip"
+								   class="btn btn-danger del_soutenance"
+								   data-id={{soutenance.id}}
+								   data-path="{{path('del_soutenance',{'id':soutenance.id})}}"
+								   data-placement="top"
+								   title="supprimer">
 									<i class="fas fa-trash-alt"></i>
 								</a>&nbsp;
 							</td>
@@ -132,14 +137,16 @@
 	</div>
 {% endblock %}
 {% block javascripts %}
-	<script src="{{asset('js/jquery-3.6.0.min.js')}}"></script>
-	<script src="{{asset('js/bootstrap.min.js')}}"></script>
+	<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+<script src="{{asset('js/sweetAlert2/sweetalert2.all.min.js')}}"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
 	<script>
 		$(document).ready(function () {
-$("#show_soutenance").hide();
-$("#soutenance").click(function () {
-$("#show_soutenance").toggle();
-})
+		$("#show_soutenance").hide();
+		$("#soutenance").click(function () {
+		$("#show_soutenance").toggle();
+	})
 
 afficheJury();
 
@@ -172,21 +179,21 @@ $("#affiche_jury").children("tr:last").remove();
 affiche_eleve();
 
 function affiche_eleve() {
-$.ajax({
-url: "{{ path('gest_soutenance') }}",
-method: "POST",
-dataType: "JSON",
-data: {
-affiche_eleve: 1
-},
-success: function (data) {
-$("#affiche_eleve").append(data);
-let num = 0;
-$(".numero_eleve").each(function () {
-$(this).html(++ num);
-})
-}
-})
+			$.ajax({
+			url: "{{ path('gest_soutenance') }}",
+			method: "POST",
+			dataType: "JSON",
+			data: {
+			affiche_eleve: 1
+		},
+			success: function (data) {
+			$("#affiche_eleve").append(data);
+			let num = 0;
+			$(".numero_eleve").each(function () {
+			$(this).html(++ num);
+		})
+		}
+	})
 }
 
 $("#add_eleve").click(function () {
@@ -194,7 +201,7 @@ affiche_eleve();
 })
 
 $("#remove_eleve").click(function () {
-$("#affiche_eleve").children("tr:last").remove();
+	$("#affiche_eleve").children("tr:last").remove();
 })
 
 // afficher les infos complementaire de l'etudiant
@@ -205,19 +212,64 @@ let id = $(this).val();
 var ligne = $(this).parent().parent(); // ligne courante
 
 $.ajax({
-url: "{{ path('gest_soutenance') }}",
-method: "POST",
-dataType: "JSON",
-data: {
-showEl: 1,
-idEl: id
-},
-success: function (data) {
-ligne.find(".encadreur").val(data["pren_encadreur"] + " " + data["nom_encadreur"]);
-ligne.find(".theme").val(data["theme"]);
-}
+			url: "{{ path('gest_soutenance') }}",
+			method: "POST",
+			dataType: "JSON",
+			data: {
+			showEl: 1,
+			idEl: id
+			},
+			success: function (data) {
+			ligne.find(".encadreur").val(data["pren_encadreur"] + " " + data["nom_encadreur"]);
+			ligne.find(".theme").val(data["theme"]);
+			}
+		})
+	})
 })
-})
-})
-	</script>
+
+//delete soutenance
+$(document).on('click','.del_soutenance',function(){
+	let id = $(this).data('id');
+	let path = $(this).data('path');
+
+	Swal.fire({
+		title: 'Êtes vous Sûr de la Suppression?',
+		text: "Vous ne serez plus capable de le restaurer!",
+		icon: 'warning',
+		showCancelButton: true,
+		cancelButtonText:'Annuler',
+		confirmButtonColor: '#3085d6',
+		cancelButtonColor: '#d33',
+		confirmButtonText: 'Oui, Supprimer!'
+		}).then((result) => {
+		if (result.isConfirmed) {
+			$.ajax({
+				url: path,
+				method:'POST',
+				dataType:'JSON',
+				data:{idSoutenance: id},
+				success:function(data){
+					if(data == 'success'){
+						Swal.fire(
+							'Supprimé!',
+							'La Soutenance a été supprimée ',
+							'success'
+							);
+							 location.reload();
+					}else{
+						swalWithBootstrapButtons.fire(
+							'Annulation',
+							'Suppression Impossible:)',
+							'error'
+							)
+					}
+				}
+			});
+			
+		}
+	});
+
+});
+
+</script>
 {% endblock %}

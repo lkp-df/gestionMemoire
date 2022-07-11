@@ -1,93 +1,114 @@
-{% extends "base.html.twig" %} {% block title %}detail soutenance{% endblock %} {% block body %}
-<br>
-<h3>Infos de la soutenance du {{soutenance.date | date("d-M-Y")}}
-    <h3>
-        <br>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">Détails soutenance</div>
-                    <div class="card-body">
-                        <div class="form-group mb-3">Année : {{soutenance.date | date("Y")}}</div>
-                        <div class="form-group mb-3">Type : {{soutenance.type}}</div>
-                        <div class="form-group mb-3">Salle : {{soutenance.salle}}</div>
+{% extends "base.html.twig" %}
+{% block title %}detail soutenance
+{% endblock %}
+{% block body %}
+	<div class="container mt-3">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="card">
+					<div class="card-header bg-dark text-white">
+						Infos de la soutenance du
+						{{soutenance.date | date("d-M-Y")}}
+					</div>
+					<div class="card-body">
+						<div class="row">
+							<div class="col-md-4">Soutenance effectuée en  :
+								{{soutenance.date | date("Y")}}</div>
+							<div class="col-md-4">Soutenance de Type :
+								{{soutenance.type}}</div>
+							<div class="col-md-4">Soutenance effectuée dans la salle :
+								{{soutenance.salle}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-3">
+			<p>Les Jurys Présents</p>
+			<div class="col-md-12">
+				{% if jurys %}
+					<table class="table table-hover">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Prénom</th>
+								<th scope="col">Nom</th>
+								<th scope="col">Titre</th>
+								<th scope="col">Poste</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% set i = 0 %}
+							{% for jury in jurys %}
+								<tr>
+									<th scope="row">{% set i = i +1 %}{{i}}</th>
+									<td>{{jury.prenom}}</td>
+									<td>{{jury.nom}}</td>
+									<td>{{jury.titre_enseignant}}</td>
+									<td>{{jury.titre}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				{% else %}
+					Aucun jury présent
+				{% endif %}
+			</div>
+		</div>
+		<div class="row mt-3">
+			<p>Liste Des Etudiants Ayant Soutenus</p>
+			<div class="col-md-12">
+				{% if etudiants %}
+					<table class="table table-hover">
+						<thead class="table-dark">
+							<tr>
+								<th scope="col">#</th>
+								<th scope="col">Prenom</th>
+								<th scope="col">Nom</th>
+								<th scope="col">Thème Mémoire</th>
+								<th scope="col">Année</th>
+								<th scope="col">Filière</th>
+								<th scope="col">Encadeur</th>
+								<th scope="col">Titre Encadreur.</th>
+								<th scope="col">Note Obt.</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% set i = 0 %}
+							{% for etudiant in etudiants %}
+								<tr>
+									<th scope="row">{% set i = i + 1 %}
+										{{i}}</th>
+									<td>{{etudiant.prenom_etu}}</td>
+									<td>{{etudiant.nom_etu}}</td>
+									<td>{{etudiant.theme}}</td>
+									<td>{{etudiant.annee}}</td>
+									<td>{{etudiant.codeFiliere}}</td>
+									<td>{{etudiant.prenom_encadreur ~ etudiant.nom_encadreur}}</td>
+									<td>{{etudiant.titre}}</td>
+									<td>{{etudiant.noteSoutenance}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					{% else %}Aucun Etudiant
+				{% endif %}
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col-md-3">
+				<a href="{{path('gest_soutenance')}}" class="btn btn-dark">Retour
+					<i class="fas fa-arrow-left"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+{% block javascripts %}
+	<script src="{{ asset('js/jquery-3.6.0.min.js') }}"></script>
+	<script src="{{asset('js/sweetAlert2/sweetalert2.all.min.js')}}"></script>
+	<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="card">
-                    <div class="card-header">Les Jurys Présents</div>
-                    <div class="card-body">
-                        {% if jurys %}
-                        <table class="table table-hover">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Prénom</th>
-                                    <th scope="col">Nom</th>
-                                    <th scope="col">Titre</th>
-                                    <th scope="col">Poste</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% set i = 0 %} {% for jury in jurys %}
-                                <tr>
-                                    <th scope="row">{% set i = i +1 %}{{i}}</th>
-                                    <td>{{jury.prenom}}</td>
-                                    <td>{{jury.nom}}</td>
-                                    <td>{{jury.titre_enseignant}}</td>
-                                    <td>{{jury.titre}}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                        {% else %}Aucun jury présent{% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br><br>
-        <h3>Listes des Eleves Ayant soutenu(e)s en ce jour</h3>
-        <div class="row mt-4">
-            <div class="col-lg-12">
-                {% if etudiants %}
-                <table class="table table-hover">
-                    <thead class="table-primary">
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Prenom</th>
-                            <th scope="col">Nom</th>
-                            <th scope="col">Thème Mémoire</th>
-                            <th scope="col">Année</th>
-                            <th scope="col">Filière</th>
-                            <th scope="col">Encadeur</th>
-                            <th scope="col">Titre Encadreur.</th>
-                            <th scope="col">Note Obt.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% set i = 0 %} {% for etudiant in etudiants %}
-                        <tr>
-                            <th scope="row">{% set i = i + 1 %} {{i}}</th>
-                            <td>{{etudiant.prenom_etu}}</td>
-                            <td>{{etudiant.nom_etu}}</td>
-                            <td>{{etudiant.theme}}</td>
-                            <td>{{etudiant.annee}}</td>
-                            <td>{{etudiant.codeFiliere}}</td>
-                            <td>{{etudiant.prenom_encadreur ~ etudiant.nom_encadreur}}</td>
-                            <td>{{etudiant.titre}}</td>
-                            <td>{{etudiant.noteSoutenance}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                {% else %}Aucun Etudiant {% endif %}
-            </div>
+	<script></script>
 
-        </div> <br>
-        <div class="row">
-            <div class="col-md-3">
-                <a href="{{path('gest_soutenance')}}" class="btn btn-dark">Retour <i class="fas fa-arrow-left"></i></a>
-            </div>
-        </div> {% endblock %}
+{% endblock %}

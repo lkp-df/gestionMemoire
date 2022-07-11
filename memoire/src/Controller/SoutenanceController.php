@@ -434,7 +434,7 @@ class SoutenanceController extends AbstractController
         }
     }
 
-     /**
+    /**
      * @Route("/gestsoutenance/del/{id<\d+>}/etu",name="del_eleve",methods={"POST","GET"})
      * @IsGranted("ROLE_DIRECTEUR")
      */
@@ -442,8 +442,68 @@ class SoutenanceController extends AbstractController
     {
         $id = $request->request->get('idEleve');
         if (!empty($id)) {
-             $this->em->remove($etudiant);
-             $this->em->flush();
+            $this->em->remove($etudiant);
+            $this->em->flush();
+
+            //renvoyons le message en ajax sous forme de json
+            $reponse = 'success';
+            return new JsonResponse($reponse, 200);
+        } else {
+            $reponse = 'failed';
+            return new JsonResponse($reponse, 400);
+        }
+    }
+
+    /**
+     * @Route("/gestsoutenance/{id<\d+>}/del",name="del_soutenance",methods={"POST","GET"})
+     * @IsGranted("ROLE_DIRECTEUR")
+     */
+    public function delete_soutenance(
+        Request $request,
+        Soutenance $soutenance,
+        EtudiantSoutenancesRepository $EtudiantSoutenancesRepository,
+        SoutenanceRepository $soutenanceRepository,
+        JuryRepository $juryRepository
+    ) {
+        //suppression de la soutenance
+        if (
+            $request->request->get('idSoutenance') &&
+            !empty($request->request->get('idSoutenance'))
+        ) {
+            //je sauvegarde ma soutenance juste pour au cas où
+            $maSoutenanceASupprimer = $soutenanceRepository->find($request->request->get('idSoutenance'));
+
+            //a cause de la relation entre soutenance et etudiant soutenance, nous
+            //allons supprimer en premier les etudiants dans une soutenance avant de supprimer la soutenance
+
+            //toutes les etudiants dans une soutenance(celle quon veut supprimer)
+            $eleves = $soutenance->getEtudiantSoutenances(); //renvoie les etudiants qui figurent dans cette soutenance que l'on veut supprimer
+
+            foreach ($eleves as  $eleve) {
+                //suppression des eleves dans cette soutenance
+                $etudiantSoutenance =  $EtudiantSoutenancesRepository->find($eleve->getId());
+
+                $this->em->remove($etudiantSoutenance);
+                $this->em->flush();
+            }
+
+            //a cause de la relation entre soutenance et jury , nous
+            //allons supprimer en premier les jurys dans une soutenance avant de supprimer la soutenance
+
+            //tous les jurys de la soutenance
+            $jurys =  $juryRepository->findBy(['soutenances' => $soutenance->getId()]);
+
+            foreach ($jurys as  $jury) {
+                //suppression des eleves dans cette soutenance
+
+                $jurySoutenance = $juryRepository->find($jury->getId());
+                $this->em->remove($jurySoutenance);
+                $this->em->flush();
+            }
+
+            //on supprime alors la soutenance
+            $this->em->remove($soutenance);
+            $this->em->flush();
 
             //renvoyons le message en ajax sous forme de json
             $reponse = 'success';
